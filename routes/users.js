@@ -1,104 +1,172 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const key = require("../secret_key.json");
+const axios = require("axios");
+const mongoose = require("mongoose");
+const User = require("../schemas/User");
 
-router.get("", function (req, res, next) {
-  req.db
-    .select("")
-    .from("user")
-    .then((results) => {
-      res.status(200).json(results);
-    });
+router.get("/", async function (req, res, next) {
+  try {
+    const users = await User.find();
+    res.status(200).json({ error: false, message: users });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
 });
 
-router.post("/login", function (req, res, next) {
-  const jwt = req.jwt;
-  const Username = req.body.Username;
-  const Password = req.body.Password;
-  if (!Username || !Password) {
-    res.status(400).json({
-      error: true,
-      message: "Both username and password are required",
-    });
+router.get("/:id", async function (req, res, next) {
+  const id = req.params.id;
+  if (!id) {
+    res.status(401).json({ error: true, message: "Missing user id" });
     return;
   }
-  req.db
-    .select("")
-    .from("user")
-    .where("Username", Username)
-    .then((results) => {
-      if (results.length === 0) {
-        res
-          .status(401)
-          .json({ error: true, message: "Incorrect username or password" });
-        return;
-      }
-      if (bcrypt.compareSync(Password, results[0].Password)) {
-        const expires_in = 60 * 60 * 3;
-        const exp = Date.now() + expires_in * 1000;
-        const token = jwt.sign(
-          {
-            Username: results[0].Username,
-            Id: results[0].Id,
-            CompanyId: results[0].CompanyId,
-            userType: "employees",
-            exp: exp,
-          },
-          key.key
-        );
-        res.status(200).json({
-          message: "Success",
-          token: "Bearer" + " " + token,
-        });
-      } else {
-        res
-          .status(401)
-          .json({ error: true, message: "Incorrect username or password" });
-        return;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      res
-        .status(500)
-        .json({ error: true, message: "Internal SQL errors on Login" });
-    });
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(401).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
 });
 
-router.post("/register", function (req, res, next) {
-  const Username = req.body.Username;
+router.post("/login", async function (req, res, next) {
+  const jwt = req.jwt;
+  const EmployeeId = req.body.EmployeeId;
   const Password = req.body.Password;
-  req.db
-    .select("")
-    .from("user")
-    .where("Username", Username)
-    .then((results) => {
-      if (results.length > 0) {
-        res.status(401).json({ message: "User already exists" });
-      } else {
-        const hashedPassword = bcrypt.hashSync(Password, 10);
-        req
-          .db("user")
-          .insert({
-            Username: Username,
-            Password: hashedPassword,
-            CompanyId: req.body.companyid,
-            PendingStatus: "pending",
-          })
-          .then(() => {
-            res
-              .status(200)
-              .json({ error: false, message: "Success, user created" });
-          })
-          .catch((err) => {
-            console.log(err);
-            res
-              .status(500)
-              .json({ error: true, message: "Internal SQL error on register" });
-          });
-      }
+
+  if (!EmployeeId || !Password) {
+    res
+      .status(401)
+      .json({ error: true, message: "Missing EmployeeId or Password" });
+    return;
+  }
+
+  try {
+    const user = await User.findOne({ EmployeeId: EmployeeId });
+    if (!user) {
+      res.status(401).json({ error: true, message: "User do not exists" });
+      return;
+    }
+
+    const match = bcrypt.compareSync(Password, user.Password);
+    if (!match) {
+      res.status(401).json({ error: true, message: "Wrong password" });
+      return;
+    }
+
+    const token = jwt.sign({ EmployeeId: EmployeeId }, process.env.JWT_SECRET, {
+      expiresIn: 86400,
     });
+
+    res.status(200).json({ error: false, token: token });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
+});
+
+router.post("/checkUser", async function (req, res, next) {
+  const EmployeeId = req.body.EmployeeId;
+
+  const employee = await axios.get("https://my.tanda.co/api/v2/users").data;
+
+  if (!employee) {
+    res.status(401).json({ error: true, message: "User do not exists" });
+    return;
+  }
+
+  const user = await User.findOne({ EmployeeId: EmployeeId });
+  if (!user) {
+    res
+      .status(403)
+      .json({ error: false, message: "User exists but not registered" });
+    return;
+  }
+
+  res.status(200).json({ error: false, message: "User exists and registered" });
+});
+
+router.post("/register", async function (req, res, next) {
+  const EmployeeId = req.body.EmployeeId;
+  const Password = req.body.Password;
+
+  if (!EmployeeId || !Password) {
+    res
+      .status(401)
+      .json({ error: true, message: "Missing EmployeeId or Password" });
+    return;
+  }
+
+  const encryptedPassword = bcrypt.hashSync(Password, 10);
+  const NewUser = new User({
+    EmployeeId: EmployeeId,
+    Password: encryptedPassword,
+  });
+
+  try {
+    await NewUser.save();
+    res.status(200).json({ error: false, message: "Success" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
+});
+
+router.put("/changePassword", async function (req, res, next) {
+  const EmployeeId = req.body.EmployeeId;
+  const OldPassword = req.body.OldPassword;
+  const NewPassword = req.body.NewPassword;
+
+  if (!EmployeeId || !OldPassword || !NewPassword) {
+    res
+      .status(401)
+      .json({ error: true, message: "Missing EmployeeId or Password" });
+    return;
+  }
+
+  const encryptedPassword = bcrypt.hashSync(NewPassword, 10);
+
+  try {
+    const user = await User.findOne({ EmployeeId: EmployeeId });
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+
+    const match = bcrypt.compareSync(OldPassword, user.Password);
+    if (!match) {
+      res.status(401).json({ error: true, message: "Wrong password" });
+      return;
+    }
+
+    await user.updateOne({ Password: encryptedPassword });
+
+    res.status(200).json({ error: false, message: "Success" });
+  } catch (error) {
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
+});
+
+router.delete("/delete/:id", async function (req, res, next) {
+  const id = req.params.id;
+
+  if (!id) {
+    res.status(401).json({ error: true, message: "Missing user id" });
+    return;
+  }
+
+  try {
+    await User.findOneAndDelete({ _id: id });
+    res.status(200).json({ error: false, message: "Success" });
+  } catch (error) {
+    res.status(500).json({ error: true, message: "Internal server error" });
+  }
 });
 
 module.exports = router;

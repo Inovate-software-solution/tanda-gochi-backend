@@ -23,7 +23,7 @@ jobs:
       - name: Set up Node.js (latest LTS version)
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: "18.17.1"
 
       - name: Fetch the base branch (for pull requests)
         if: github.event_name == 'pull_request'
@@ -38,3 +38,26 @@ jobs:
 
       - name: Run Tests
         run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.DEPLOYKEY }}" > ~/.ssh/DeployKey
+          chmod 600 ~/.ssh/DeployKey
+          eval $(ssh-agent -s)
+          ssh-add ~/.ssh/DeployKey
+      - name: Add Server to Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: SSH and Deploy
+        run: |
+          ssh -i ~/.ssh/DeployKey capstone@${{ secrets.SERVER_IP }} << 'ENDSSH'
+          bash /home/capstone/CapstoneProjects/DeployScriptAPI.sh
+          ENDSSH

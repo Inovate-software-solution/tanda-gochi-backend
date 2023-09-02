@@ -1,2 +1,6 @@
 /node_modules
 /knex.js
+/.env
+/public/uploads/badges/*
+/public/uploads/items/*
+/public/uploads/outfits/*

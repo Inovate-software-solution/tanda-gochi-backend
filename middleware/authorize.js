@@ -1,5 +1,3 @@
-const key = require("../secret_key.json");
-
 const authorize = function (req, res, next) {
   const jwt = req.jwt;
   if (!req.headers.authorization) {
@@ -19,7 +17,7 @@ const authorize = function (req, res, next) {
     }
     const token = auth.split(" ")[1];
     try {
-      const payload = jwt.verify(token, key.key);
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
       if (Date.now() > payload.exp) {
         res.status(401).json({
           error: true,
