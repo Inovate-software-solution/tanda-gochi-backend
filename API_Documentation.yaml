@@ -1,0 +1,2259 @@
+openapi: '3.0.2'
+info:
+  title: ISS Capstone API
+  version: '1.0'
+  description: 
+    This is the API documentation for the ISS Capstone project.
+    For more information, contact the developers.
+servers:
+  - url: https://api.server.test/v1
+
+
+paths:
+  # Devices
+  /Devices/:
+    get:
+      summary: Get all registered devices
+      tags:
+        - Devices
+      responses:
+        '200':
+          description: Returns all registered devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    Name: "Front-door device"
+                    Description: "This is device at the front door"
+                    Status: "ACTIVE"
+                    AuthToken: "1234567890"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+  
+  /Devices/{_id}:
+    get:
+      summary: Get device by ID
+      tags:
+        - Devices
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the device to get
+      responses:
+        '200':
+          description: Get all registered devices
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    Name: "Front-door device"
+                    Description: "This is device at the front door"
+                    Status: "ACTIVE"
+                    AuthToken: "1234567890"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        "404":
+          description: "Device not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Device not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+    
+  /Devices/register:
+    post:
+      tags:
+      - Devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                  example: "Front-door device"
+                Description:
+                  type: string
+                  example: "This is device at the front door"
+                Status:
+                  type: string
+                  example: "ACTIVE"
+                AuthToken:
+                  type: string
+                  example: "1234567890"
+              required:
+                - Name
+                - Description
+                - Status
+                - AuthToken
+      responses:
+        '201':
+          description: Device added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Device added successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+          - bearerAuth: []
+
+  /Devices/update/{_id}:
+    put:
+      tags:
+      - Devices
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the device to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                  example: "Front-door device"
+                Description:
+                  type: string
+                  example: "This is device at the front door"
+                Status:
+                  type: string
+                  example: "ACTIVE"
+                AuthToken:
+                  type: string
+                  example: "1234567890"
+              required:
+                - Name
+                - Description
+                - Status
+                - AuthToken
+      responses:
+        '201':
+          description: Device updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Device updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '404':
+          description: "Device not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Device not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+          - bearerAuth: []
+
+  /Devices/delete/{_id}:
+    delete:
+      tags:
+      - Devices
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the device to delete
+      responses:
+        '201':
+          description: Device deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Device deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '404':
+          description: "Device not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Device not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+            
+  /Devices/CheckToken:
+    post:
+      tags:
+      - Devices
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthToken:
+                  type: string
+                  example: "1234567890"
+              required:
+                - AuthToken
+      responses:
+        '201':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Token is valid!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+  # Users
+  /Users:
+    get:
+      summary: Get all  users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Returns all registered users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    PetId: 1
+                    EmployeeId: "123456789"
+                    Score: 9999
+                    Credit: 9999
+  
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        "500":
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Users/{_id}:
+    get:
+      summary: Get user by ID
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get
+      responses:
+        '200':
+          description: Get all registered users
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    PetId: 1
+                    EmployeeId: "123456789"
+                    Score: 9999
+                    Credit: 9999
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        "404":
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "User not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Users/add:
+    post:
+      tags:
+      - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                PetId:
+                  type: integer
+                  example: 1
+                EmployeeId:
+                  type: string
+                  example: "123456789"
+              required:
+                - PetId
+                - EmployeeId
+      responses:
+        '201':
+          description: User added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "User added successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+          - bearerAuth: []      
+
+  /Users/delete/{_id}:
+    delete:
+      tags:
+      - Users
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to delete
+      responses:
+        '201':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "User deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '404':
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "User not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+
+
+  # Badges
+  /Badges:
+    get:
+      summary: Get all badges
+      tags:
+        - Badges
+      responses:
+        '200':
+          description: Returns all badges in the data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    Title: "Badge 1"
+                    Description: "This is badge 1"
+                    ImageURL: "localhost:8080/image1"
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Badges/{_id}:
+    get:
+      summary: Get badge by ID
+      tags:
+        - Badges
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the badge to get
+      responses:
+        '200':
+          description: Get all registered badges
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    Title: "Badge 1"
+                    Description: "This is badge 1"
+                    ImageURL: "localhost:8080/image1"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        "404":
+          description: "Badge not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Badge not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Badges/create:
+    post:
+      tags:
+      - Badges
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Badge 1"
+                Description:
+                  type: string
+                  example: "This is badge 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Badge created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Badge created successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+          - bearerAuth: []
+
+  /Badges/update/{_id}:
+    put:
+      tags:
+      - Badges
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the badge to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Badge 1"
+                Description:
+                  type: string
+                  example: "This is badge 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Badge updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Badge updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+        '404':
+          description: "Badge not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Badge not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+
+  /Badges/delete/{_id}:
+    delete:
+      tags:
+      - Badges
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the badge to delete
+      responses:
+        '201':
+          description: Badge deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Badge deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '404':
+          description: "Badge not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Badge not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+
+  # BadgesList
+  /BadgesList/{UserId}:
+    get:
+      summary: Get all badges of a user
+      tags:
+        - BadgesList
+      parameters:
+        - in: path
+          name: UserId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get badges
+      responses:
+        '200':
+          description: Returns all badges of a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    Title: "Badge 1"
+                    Description: "This is badge 1"
+                    ImageURL: "localhost:8080/image1"
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /BadgesList/assign?UserId={UserId}&BadgeId={BadgeId}:
+    post:
+      tags:
+      - BadgesList
+      parameters:
+        - in: path
+          name: UserId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to assign badge
+        - in: path
+          name: BadgeId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the badge to assign
+      responses:
+        '201':
+          description: Badge assigned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Badge assigned successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '404':
+          description: "Badge or user not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Badge or user not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+
+  /BadgesList/remove?UserId={UserId}&BadgeId={BadgeId}:
+    delete:
+      tags:
+      - BadgesList
+      parameters:
+        - in: path
+          name: UserId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to remove badge
+        - in: path
+          name: BadgeId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the badge to remove
+      responses:
+        '201':
+          description: Badge removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Badge removed successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '404':
+          description: "Badge or user not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Badge or user not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+
+      security:
+          - bearerAuth: []
+
+  
+  # Pets
+  /Pets:
+    get:
+      summary: Get all pets
+      tags:
+        - Pets
+      responses:
+        '200':
+          description: Returns all pets in the data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    Title: "Pet 1"
+                    Description: "This is pet 1"
+                    ImageURL: "localhost:8080/image1"
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Pets/{_id}:
+    get:
+      summary: Get pet by ID
+      tags:
+        - Pets
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the pet to get
+      responses:
+        '200':
+          description: Get all registered pets
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    Title: "Pet 1"
+                    Description: "This is pet 1"
+                    ImageURL: "localhost:8080/image1"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        "404":
+          description: "Pet not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Pet not found"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
+
+  /Pets/create:
+    post:
+      tags:
+      - Pets
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Pet 1"
+                Description:
+                  type: string
+                  example: "This is pet 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Pet created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Pet created successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Detail of missing or mailformed request body"
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /Pets/update/{_id}:
+    put:
+      tags:
+      - Pets
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the pet to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Pet 1"
+                Description:
+                  type: string
+                  example: "This is pet 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Pet updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Pet not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /Pets/delete/{_id}:
+    delete:
+      tags:
+      - Pets
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the pet to delete
+      responses:
+        '201':
+          description: Pet deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Pet deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Pet not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  # Items
+  /Items:
+    get:
+      summary: Get all items
+      tags:
+        - Items
+      responses:
+        '200':
+          description: Returns all items in the data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    _id:
+                      type: integer
+                      example: 1
+                    Title:
+                      type: string
+                      example: "Item 1"
+                    Description:
+                      type: string
+                      example: "This is item 1"
+                    Price:
+                      type: integer
+                      example: 100
+                    ImageURL:
+                      type: string
+                      example: "localhost:8080/image1"
+                    CategoryId:
+                      type: integer
+                      example: 1
+  
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+        - bearerAuth: []
+  
+  /Items/{_id}:
+    get:
+      summary: Get item by ID
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to get
+      responses:
+        '200':
+          description: Get all registered items
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    Title: "Item 1"
+                    Description: "This is item 1"
+                    Price: 100
+                    ImageURL: "localhost:8080/image1"
+                    CategoryId: 1
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        "404":
+          description: "Item not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+        - bearerAuth: []
+  
+  /Items/create:
+    post:
+      tags:
+      - Items
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Item 1"
+                Description:
+                  type: string
+                  example: "This is item 1"
+                Price:
+                  type: integer
+                  example: 100
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+                CategoryId:
+                  type: integer
+                  example: 1
+              required:
+                - Title
+                - Description
+                - Price
+                - ImageURL
+                - CategoryId
+      responses:
+        '201':
+          description: Item created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item created successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /Items/delete{_id}:
+    delete:
+      tags:
+      - Items
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to delete
+      responses:
+        '201':
+          description: Item deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Item not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /Items/update/{_id}:
+    put:
+      tags:
+      - Items
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Item 1"
+                Description:
+                  type: string
+                  example: "This is item 1"
+                Price:
+                  type: integer
+                  example: 100
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+                CategoryId:
+                  type: integer
+                  example: 1
+              required:
+                - Title
+                - Description
+                - Price
+                - ImageURL
+                - CategoryId
+      responses:
+        '201':
+          description: Item updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Item not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  # ItemCategories
+  /ItemCategories:
+    get:
+      summary: Get all item categories
+      tags:
+        - ItemCategories
+      responses:
+        '200':
+          description: Returns all item categories in the data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties: 
+                    _id:
+                      type: integer
+                      example: 1
+                    Title:
+                      type: string
+                      example: "Category 1"
+                    Description:
+                      type: string
+                      example: "This is category 1"
+                    ImageURL:
+                      type: string
+                      example: "localhost:8080/image1"
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+        - bearerAuth: []
+  
+  /ItemCategories/{_id}:
+    get:
+      summary: Get item category by ID
+      tags:
+        - ItemCategories
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item category to get
+      responses:
+        '200':
+          description: Get all registered item categories
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                    _id: 1
+                    Title: "Category 1"
+                    Description: "This is category 1"
+                    ImageURL: "localhost:8080/image1"
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        "404":
+          description: "Item category not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+        - bearerAuth: []
+
+  /ItemCategories/create:
+    post:
+      tags:
+      - ItemCategories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Category 1"
+                Description:
+                  type: string
+                  example: "This is category 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Item category created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item category created successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /ItemCategories/delete{_id}:
+    delete:
+      tags:
+      - ItemCategories
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item category to delete
+      responses:
+        '201':
+          description: Item category deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item category deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Item category not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+      security:
+          - bearerAuth: []
+
+  /ItemCategories/update/{_id}:
+    put:
+      tags:
+      - ItemCategories
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item category to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Category 1"
+                Description:
+                  type: string
+                  example: "This is category 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Item category updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item category updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '404':
+          description: "Item category not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+          - bearerAuth: []
+
+  #ItemVariablesList
+  /ItemVariablesList/{ItemId}:
+    get:
+      summary: Get all item variables of an item
+      tags:
+        - ItemVariablesList
+      parameters:
+        - in: path
+          name: ItemId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to get item variables
+      responses:
+        '200':
+          description: Returns all item variables of an item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    Title: "Item variable 1"
+                    Description: "This is item variable 1"
+                    ImageURL: "localhost:8080/image1"
+                    ItemId: 1
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+        - bearerAuth: []
+  
+  /ItemVariablesList/add/{ItemId}:
+    post:
+      tags:
+      - ItemVariablesList
+      parameters:
+        - in: path
+          name: ItemId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to add item variable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Item variable 1"
+                Description:
+                  type: string
+                  example: "This is item variable 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Item variable added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item variable added successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '404':
+          description: "Item not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+          - bearerAuth: []
+
+  /ItemVariablesList/remove?ItemId={ItemId}&ItemVariableId={ItemVariableId}:
+    delete:
+      tags:
+      - ItemVariablesList
+      parameters:
+        - in: path
+          name: ItemId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item to remove item variable
+        - in: path
+          name: ItemVariableId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item variable to remove
+      responses:
+        '201':
+          description: Item variable removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item variable removed successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '404':
+          description: "Item or item variable not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+          - bearerAuth: []
+
+  /ItemVariablesList/update?ItemId={ItemId}&ItemVariableId={ItemVariableId}:
+    put:
+      tags:
+      - ItemVariablesList
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the item variable to update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Title:
+                  type: string
+                  example: "Item variable 1"
+                Description:
+                  type: string
+                  example: "This is item variable 1"
+                ImageURL:
+                  type: string
+                  example: "localhost:8080/image1"
+              required:
+                - Title
+                - Description
+                - ImageURL
+      responses:
+        '201':
+          description: Item variable updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Item variable updated successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '400':
+          description: "Bad request"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '404':
+          description: "Item variable not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+          - bearerAuth: []
+
+
+  #Inventory
+  /Inventory/{UserId}:
+    get:
+      summary: Get all items of a user
+      tags:
+        - Inventory
+      parameters:
+        - in: path
+          name: UserId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the user to get inventory
+      responses:
+        '200':
+          description: Returns all items of a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  example: 
+                    _id: 1
+                    UserId: 1
+                    ItemId: 1
+                    
+        "401":
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
