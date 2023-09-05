@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 const Outfit = require("../schemas/Outfit");
 
 const storage = multer.diskStorage({
@@ -144,3 +145,5 @@ router.delete("/delete/:id", async function (req, res, next) {
     res.status(500).json({ error: true, message: "Internal server error" });
   }
 });
+
+module.exports = router;
