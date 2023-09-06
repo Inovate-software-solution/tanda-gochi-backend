@@ -2,11 +2,10 @@ const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
 const jwt = require("jsonwebtoken");
-const chalk = require("chalk");
-const moment = require("moment");
 const cors = require("cors");
+const RequestLogger = require("./middleware/logger");
+
 require("dotenv").config();
 
 // Swagger documentation
@@ -20,10 +19,10 @@ const mongoose = require("mongoose");
 
 const badgesRouter = require("./routes/badges.js");
 const usersRouter = require("./routes/users.js");
+const userActionsRouter = require("./routes/userActions.js");
 const devicesRouter = require("./routes/devices.js");
-// const companiesRouter = require("./routes/companies.js");
-// const loginRouter = require("./routes/login");
-// const registerRouter = require("./routes/register");
+const outfitsRouter = require("./routes/outfits.js");
+const itemsRouter = require("./routes/items.js");
 
 const app = express();
 app.set("views", path.join(__dirname, "views"));
@@ -57,35 +56,25 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  logger(function (tokens, req, res) {
-    return [
-      chalk.white(moment().format("DD/MM/YY HH:mm:ss")),
-      chalk.yellow(tokens["remote-addr"](req, res)),
-      chalk.green.bold(tokens.method(req, res)),
-      tokens.status(req, res) >= 500
-        ? chalk.red.bold(tokens.status(req, res))
-        : tokens.status(req, res) < 500 && tokens.status(req, res) >= 400
-        ? chalk.yellow.bold(tokens.status(req, res))
-        : tokens.status(req, res) < 400 && tokens.status(req, res) >= 300
-        ? chalk.blue.bold(tokens.status(req, res))
-        : chalk.green.bold(tokens.status(req, res)),
-      chalk.white(tokens.url(req, res)),
-      chalk.yellow(tokens["response-time"](req, res) + " ms"),
-    ].join(" ");
-  })
-);
+app.use(RequestLogger);
 
-//app.use("/login", loginRouter);
-//app.use("/register", registerRouter);
 app.get("/", (req, res, next) => {
-  res.redirect("/doc/");
+  res.redirect("/api/documentation");
 });
-app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/users", usersRouter);
-app.use("/devices", devicesRouter);
-app.use("/badges", badgesRouter);
-// app.use("/companies", companiesRouter);
+app.get("/api", (req, res, next) => {
+  res.redirect("/api/documentation");
+});
+app.use(
+  "/api/documentation",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument)
+);
+app.use("/api/users", usersRouter);
+app.use("/api/user/action", userActionsRouter);
+app.use("/api/devices", devicesRouter);
+app.use("/api/badges", badgesRouter);
+app.use("/api/outfits", outfitsRouter);
+app.use("/api/items", itemsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -99,12 +88,14 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   if (err.status === 404) {
+    console.log(err.message);
     return res.status(404).json({
       error: true,
       message: "Route not found!",
     });
   } else {
-    res.status(err.status || 500).json({
+    console.log(err.message);
+    return res.status(err.status || 500).json({
       error: true,
       message:
         "Internal server error, contact the software engineer! The errors was handled by generic error handler",

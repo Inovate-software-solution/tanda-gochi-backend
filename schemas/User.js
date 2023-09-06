@@ -21,15 +21,14 @@ const UserSchema = new mongoose.Schema({
   },
   Badges: [
     {
-      badgeId: {
+      BadgeId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Badges",
         required: true,
         unique: true,
       },
-      dateAwarded: {
+      DateAwarded: {
         type: Date,
-        default: Date.now,
         required: true,
       },
     },
@@ -37,13 +36,13 @@ const UserSchema = new mongoose.Schema({
 
   Inventory: [
     {
-      itemId: {
+      ItemId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Items",
         required: true,
         unique: true,
       },
-      quantity: {
+      Quantity: {
         type: Number,
         required: true,
         default: 0,

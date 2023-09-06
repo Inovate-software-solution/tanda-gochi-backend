@@ -40,6 +40,7 @@ jobs:
         run: npm test
 
   deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
     runs-on: ubuntu-latest
     steps:

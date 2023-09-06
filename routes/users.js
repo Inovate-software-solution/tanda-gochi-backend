@@ -4,28 +4,23 @@ const bcrypt = require("bcrypt");
 const axios = require("axios");
 const mongoose = require("mongoose");
 const User = require("../schemas/User");
+const validIdCheck = require("../middleware/validParamIdCheck");
 
 router.get("/", async function (req, res, next) {
   try {
     const users = await User.find();
-    res.status(200).json({ error: false, message: users });
+    res.status(200).json(users);
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ error: true, message: "Internal server error" });
   }
 });
 
-router.get("/:id", async function (req, res, next) {
-  const id = req.params.id;
-  if (!id) {
-    res.status(401).json({ error: true, message: "Missing user id" });
-    return;
-  }
-
+router.get("/:id", validIdCheck, async function (req, res, next) {
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(req.params.id);
     if (!user) {
-      res.status(401).json({ error: true, message: "User do not exists" });
+      res.status(404).json({ error: true, message: "User do not exists" });
       return;
     }
     res.status(200).json(user);
@@ -72,44 +67,85 @@ router.post("/login", async function (req, res, next) {
 });
 
 router.post("/checkUser", async function (req, res, next) {
-  const EmployeeId = req.body.EmployeeId;
-
-  const employee = await axios.get("https://my.tanda.co/api/v2/users").data;
-
-  if (!employee) {
-    res.status(401).json({ error: true, message: "User do not exists" });
+  try {
+    const employee = await axios.get(
+      "https://my.tanda.co/api/v2/users/" + req.body.EmployeeId,
+      {
+        headers: {
+          Authorization: "bearer " + process.env.TANDA_AUTH_TOKEN,
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error.response.status);
+    if (error.response.status === 404) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(response.status).json(error.response.data);
     return;
   }
 
-  const user = await User.findOne({ EmployeeId: EmployeeId });
-  if (!user) {
+  try {
+    const user = await User.findOne({ EmployeeId: req.body.EmployeeId });
+    if (!user) {
+      res.status(404).json({
+        error: true,
+        message: "User is valid and exist in Tanda DB but not registered",
+      });
+      return;
+    }
     res
-      .status(403)
-      .json({ error: false, message: "User exists but not registered" });
-    return;
+      .status(200)
+      .json({ error: false, message: "User exists and registered" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ error: true, message: "Internal server error" });
   }
-
-  res.status(200).json({ error: false, message: "User exists and registered" });
 });
 
 router.post("/register", async function (req, res, next) {
   const EmployeeId = req.body.EmployeeId;
   const Password = req.body.Password;
-
   if (!EmployeeId || !Password) {
     res
-      .status(401)
+      .status(400)
       .json({ error: true, message: "Missing EmployeeId or Password" });
     return;
   }
 
-  const encryptedPassword = bcrypt.hashSync(Password, 10);
-  const NewUser = new User({
-    EmployeeId: EmployeeId,
-    Password: encryptedPassword,
-  });
+  try {
+    const employee = await axios.get(
+      "https://my.tanda.co/api/v2/users/" + req.body.EmployeeId,
+      {
+        headers: {
+          Authorization: "bearer " + process.env.TANDA_AUTH_TOKEN,
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error.response.status);
+    if (error.response.status === 404) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(response.status).json(error.response.data);
+    return;
+  }
 
   try {
+    const encryptedPassword = bcrypt.hashSync(Password, 10);
+    const NewUser = new User({
+      EmployeeId: EmployeeId,
+      Password: encryptedPassword,
+    });
+    const user = await User.findById(EmployeeId);
+
+    if (user) {
+      res.status(403).json({ error: true, message: "User already exists!" });
+      return;
+    }
+
     await NewUser.save();
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
@@ -153,17 +189,10 @@ router.put("/changePassword", async function (req, res, next) {
   }
 });
 
-router.delete("/delete/:id", async function (req, res, next) {
-  const id = req.params.id;
-
-  if (!id) {
-    res.status(401).json({ error: true, message: "Missing user id" });
-    return;
-  }
-
+router.delete("/delete/:id", validIdCheck, async function (req, res, next) {
   try {
     await User.findOneAndDelete({ _id: id });
-    res.status(200).json({ error: false, message: "Success" });
+    res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     res.status(500).json({ error: true, message: "Internal server error" });
   }
