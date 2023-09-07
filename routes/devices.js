@@ -19,7 +19,7 @@ router.post("/register", async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   try {
     const devices = await Device.find();
-    res.status(200).json({ error: false, message: devices });
+    res.status(200).json(devices);
   } catch (error) {
     res.status(500).json({ error: true, message: "Internal server error" });
   }
