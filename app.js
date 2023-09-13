@@ -4,7 +4,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-const RequestLogger = require("./middleware/logger");
+const RequestLogger = require("./src/middleware/logger");
 
 require("dotenv").config();
 
@@ -17,18 +17,21 @@ const swaggerDocument = YAML.parse(file);
 
 const mongoose = require("mongoose");
 
-const badgesRouter = require("./routes/badges.js");
-const usersRouter = require("./routes/users.js");
-const userActionsRouter = require("./routes/userActions.js");
-const devicesRouter = require("./routes/devices.js");
-const outfitsRouter = require("./routes/outfits.js");
-const itemsRouter = require("./routes/items.js");
+const clockingRouter = require("./src/routes/clocking.js");
+const badgesRouter = require("./src/routes/badges.js");
+const usersRouter = require("./src/routes/users.js");
+const userActionsRouter = require("./src/routes/userActions.js");
+const devicesRouter = require("./src/routes/devices.js");
+const outfitsRouter = require("./src/routes/outfits.js");
+const itemsRouter = require("./src/routes/items.js");
 
 const app = express();
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
 app.use(cors());
+
+const TandaAPI = "https://my.tanda.co/api/v2";
 
 // Mongoose connection
 async function connectToDatabase() {
@@ -56,6 +59,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  req.TandaAPI = TandaAPI;
+  next();
+});
+
 app.use(RequestLogger);
 
 app.get("/", (req, res, next) => {
@@ -69,6 +77,8 @@ app.use(
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument)
 );
+
+app.use("/api/clocking", clockingRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/user/action", userActionsRouter);
 app.use("/api/devices", devicesRouter);
@@ -101,7 +111,6 @@ app.use(function (err, req, res, next) {
         "Internal server error, contact the software engineer! The errors was handled by generic error handler",
     });
   }
-  // render the error page
 });
 
 module.exports = app;

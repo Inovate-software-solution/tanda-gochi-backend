@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - synchronize
-      - opened
   workflow_dispatch:
 
 jobs:
@@ -25,13 +22,9 @@ jobs:
         with:
           node-version: "18.17.1"
 
-      - name: Fetch the base branch (for pull requests)
-        if: github.event_name == 'pull_request'
-        run: git fetch origin ${{ github.base_ref }}
-
-      - name: Merge with base branch (for pull requests)
-        if: github.event_name == 'pull_request'
-        run: git merge FETCH_HEAD --no-commit --no-ff
+      - name: Import .env from secrets
+        run: |
+          echo "${{ secrets.DOTENV }}" > .env
 
       - name: Install Dependencies
         run: npm install

@@ -139,7 +139,7 @@ router.delete("/delete/:id", validIdCheck, async function (req, res, next) {
     return;
   }
   try {
-    await Item.deleteOne({ _id: req.params.id });
+    await Item.findOneAndDelete({ _id: req.params.id });
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);

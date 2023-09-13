@@ -1,19 +1,12 @@
 const mongoose = require("mongoose");
 
 const DeviceSchema = new mongoose.Schema({
-  Name: {
-    type: String,
+  DeviceId: {
+    type: Number,
     required: true,
   },
-  Description: {
+  DeviceToken: {
     type: String,
-    required: false,
-    default: "",
-  },
-  Status: {
-    type: String,
-    enum: ["Active", "Inactive"],
-    default: "Active",
     required: true,
   },
 });

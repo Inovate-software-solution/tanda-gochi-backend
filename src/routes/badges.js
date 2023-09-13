@@ -102,12 +102,7 @@ router.put(
 
 router.delete("/delete/:id", validIdCheck, async function (req, res, next) {
   try {
-    const badge = await Badge.findOne({ _id: req.params.id });
-    if (!badge) {
-      res.status(404).json({ error: true, message: "Badge do not exists" });
-      return;
-    }
-    await badge.delete();
+    await Badge.findOneAndDelete({ _id: req.params.id });
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);

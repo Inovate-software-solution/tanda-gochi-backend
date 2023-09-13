@@ -18,21 +18,21 @@ const authorize = function (req, res, next) {
     const token = auth.split(" ")[1];
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
-      if (Date.now() > payload.exp) {
-        res.status(401).json({
-          error: true,
-          message: "Unauthorized: Expired JWT",
-        });
-        return;
-      }
+
       req.UserData = payload;
       next();
     } catch (e) {
-      res.status(401).json({
-        error: true,
-        message: "Unauthorized: Invalid JWT",
-      });
-      return;
+      if (e.name === "TokenExpiredError") {
+        return res.status(401).json({
+          error: true,
+          message: "Unauthorized: Expired JWT",
+        });
+      } else {
+        return res.status(401).json({
+          error: true,
+          message: "Unauthorized: Invalid JWT",
+        });
+      }
     }
   }
 };
