@@ -20,7 +20,7 @@ const upload = multer({ storage: storage });
 router.get("/", async function (req, res, next) {
   try {
     const badges = await Badge.find();
-    res.status(200).json({ error: false, message: badges });
+    res.status(200).json(badges);
   } catch (error) {
     res.status(500).json({ error: true, message: "Internal server error" });
   }
