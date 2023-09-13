@@ -22,6 +22,10 @@ jobs:
         with:
           node-version: "18.17.1"
 
+      - name: Import .env from secrets
+        run: |
+          echo "${{ secrets.DOTENV }}" > .env
+
       - name: Install Dependencies
         run: npm install
 
