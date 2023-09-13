@@ -32,30 +32,28 @@ router.get("/:id", validIdCheck, async function (req, res, next) {
 
 router.post("/login", async function (req, res, next) {
   const jwt = req.jwt;
-  const EmployeeId = req.body.EmployeeId;
+  const Email = req.body.Email;
   const Password = req.body.Password;
 
-  if (!EmployeeId || !Password) {
-    res
-      .status(401)
-      .json({ error: true, message: "Missing EmployeeId or Password" });
+  if (!Email || !Password) {
+    res.status(401).json({ error: true, message: "Missing Email or Password" });
     return;
   }
 
   try {
-    const user = await User.findOne({ EmployeeId: EmployeeId });
+    const user = await User.findOne({ Email: Email });
     if (!user) {
       res.status(401).json({ error: true, message: "User do not exists" });
       return;
     }
 
-    const match = bcrypt.compareSync(Password, user.Password);
+    const match = await bcrypt.compare(Password, user.Password);
     if (!match) {
       res.status(401).json({ error: true, message: "Wrong password" });
       return;
     }
 
-    const token = jwt.sign({ EmployeeId: EmployeeId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ Email: Email }, process.env.JWT_SECRET, {
       expiresIn: 86400,
     });
 
@@ -67,27 +65,36 @@ router.post("/login", async function (req, res, next) {
 });
 
 router.post("/checkUser", async function (req, res, next) {
+  if (!req.body.Email) {
+    res.status(400).json({ error: true, message: "Missing Email" });
+    return;
+  }
+
   try {
-    const employee = await axios.get(
-      "https://my.tanda.co/api/v2/users/" + req.body.EmployeeId,
-      {
+    const employee = await axios
+      .get(req.TandaAPI + "/users", {
         headers: {
           Authorization: "bearer " + process.env.TANDA_AUTH_TOKEN,
         },
-      }
-    );
-  } catch (error) {
-    console.log(error.response.status);
-    if (error.response.status === 404) {
-      res.status(404).json({ error: true, message: "User do not exists" });
+      })
+      .then((res) => res.data);
+
+    const user = employee.find((user) => user.email === req.body.Email);
+    if (!user) {
+      res.status(404).json({
+        error: true,
+        message: "User is not valid",
+      });
       return;
     }
+  } catch (error) {
+    console.log(error.response.status);
     res.status(response.status).json(error.response.data);
     return;
   }
 
   try {
-    const user = await User.findOne({ EmployeeId: req.body.EmployeeId });
+    const user = await User.findOne({ Email: req.body.Email });
     if (!user) {
       res.status(404).json({
         error: true,
@@ -105,41 +112,48 @@ router.post("/checkUser", async function (req, res, next) {
 });
 
 router.post("/register", async function (req, res, next) {
-  const EmployeeId = req.body.EmployeeId;
+  const Email = req.body.Email;
   const Password = req.body.Password;
-  if (!EmployeeId || !Password) {
-    res
-      .status(400)
-      .json({ error: true, message: "Missing EmployeeId or Password" });
+  if (!Email || !Password) {
+    res.status(400).json({ error: true, message: "Missing Email or Password" });
+    return;
+  }
+
+  if (!req.body.Email) {
+    res.status(400).json({ error: true, message: "Missing Email" });
     return;
   }
 
   try {
-    const employee = await axios.get(
-      "https://my.tanda.co/api/v2/users/" + req.body.EmployeeId,
-      {
+    const employee = await axios
+      .get(req.TandaAPI + "/users", {
         headers: {
           Authorization: "bearer " + process.env.TANDA_AUTH_TOKEN,
         },
-      }
-    );
-  } catch (error) {
-    console.log(error.response.status);
-    if (error.response.status === 404) {
-      res.status(404).json({ error: true, message: "User do not exists" });
+      })
+      .then((res) => res.data);
+
+    const user = employee.find((user) => user.email === req.body.Email);
+    if (!user) {
+      res.status(404).json({
+        error: true,
+        message: "User is not valid",
+      });
       return;
     }
+  } catch (error) {
+    console.log(error.response.status);
     res.status(response.status).json(error.response.data);
     return;
   }
 
   try {
-    const encryptedPassword = bcrypt.hashSync(Password, 10);
+    const encryptedPassword = await bcrypt.hash(Password, 10);
     const NewUser = new User({
-      EmployeeId: EmployeeId,
+      Email: Email,
       Password: encryptedPassword,
     });
-    const user = await User.findById(EmployeeId);
+    const user = await User.findOne({ Email: Email });
 
     if (user) {
       res.status(403).json({ error: true, message: "User already exists!" });
@@ -155,21 +169,19 @@ router.post("/register", async function (req, res, next) {
 });
 
 router.put("/changePassword", async function (req, res, next) {
-  const EmployeeId = req.body.EmployeeId;
+  const Email = req.body.Email;
   const OldPassword = req.body.OldPassword;
   const NewPassword = req.body.NewPassword;
 
-  if (!EmployeeId || !OldPassword || !NewPassword) {
-    res
-      .status(401)
-      .json({ error: true, message: "Missing EmployeeId or Password" });
+  if (!Email || !OldPassword || !NewPassword) {
+    res.status(401).json({ error: true, message: "Missing Email or Password" });
     return;
   }
 
   const encryptedPassword = bcrypt.hashSync(NewPassword, 10);
 
   try {
-    const user = await User.findOne({ EmployeeId: EmployeeId });
+    const user = await User.findOne({ Email: Email });
     if (!user) {
       res.status(404).json({ error: true, message: "User do not exists" });
       return;
