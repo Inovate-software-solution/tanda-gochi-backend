@@ -35,6 +35,7 @@ const TandaAPI = "https://my.tanda.co/api/v2";
 
 // Mongoose connection
 async function connectToDatabase() {
+  if (process.env.NODE_ENV === "test") return;
   try {
     await mongoose.connect(process.env.DB_CONNECTION_STRING, {
       dbName: "tanda",

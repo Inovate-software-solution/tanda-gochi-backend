@@ -11,6 +11,17 @@ let DeviceToken;
 beforeAll(async () => {
   await mongod.start();
   process.env.DB_CONNECTION_STRING = await mongod.getUri();
+
+  try {
+    await mongoose.connect(process.env.DB_CONNECTION_STRING, {
+      dbName: "tanda",
+    });
+    console.log("Connected to test MongoDB");
+  } catch (error) {
+    console.error("Could not connect to test MongoDB", error);
+    process.exit(1); // Exit the process with failure code
+  }
+
   server = request(app);
 });
 
