@@ -13,6 +13,10 @@ const ItemSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  Type: {
+    type: String,
+    required: true,
+  },
   ImageURL: {
     type: String,
     required: true,

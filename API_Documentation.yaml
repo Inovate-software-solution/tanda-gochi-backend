@@ -1368,6 +1368,9 @@ paths:
                 Price:
                   type: integer
                   example: 100
+                Type:
+                  type: string
+                  example: Toy
               required:
                 - Name
                 - Description
@@ -1430,6 +1433,9 @@ paths:
                 Price:
                   type: integer
                   example: 100
+                Type:
+                  type: string
+                  example: Toy
           application/json:
             schema:
               type: object
@@ -1443,10 +1449,14 @@ paths:
                 Price:
                   type: integer
                   example: 100
+                Type:
+                  type: string
+                  example: Toy
               required:
                 - Name
                 - Description
                 - Price     
+                - Type
       responses:
         '200':
           description: Item updated successfully

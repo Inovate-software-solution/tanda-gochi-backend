@@ -30,11 +30,13 @@ router.post("/upload", upload.single("file"), async function (req, res, next) {
   const Name = req.body.Name;
   const Description = req.body.Description;
   const Price = req.body.Price;
+  // Possible types are Food, Toy, and Costume
+  const Type = req.body.Type;
 
-  if (!Name || !Price) {
+  if (!Name || !Price || !Type) {
     res.status(401).json({
       error: true,
-      message: "Missing Name, Price",
+      message: "Missing Name, Price, or Type",
     });
     return;
   }
@@ -49,6 +51,7 @@ router.post("/upload", upload.single("file"), async function (req, res, next) {
       Name: Name,
       Description: Description,
       Price: Price,
+      Type: Type,
       ImageURL: req.file.filename,
     });
     await item.save();
@@ -61,7 +64,7 @@ router.post("/upload", upload.single("file"), async function (req, res, next) {
 
 router.get("/:id", validIdCheck, async function (req, res, next) {
   if (!req.params.id) {
-    res.status(400).json({ error: true, message: "Missing outfit id" });
+    res.status(400).json({ error: true, message: "Missing item id" });
     return;
   }
   try {
@@ -81,17 +84,18 @@ router.put("/update/:id", validIdCheck, async function (req, res, next) {
   const Name = req.body.Name;
   const Description = req.body.Description;
   const Price = req.body.Price;
+  const Type = req.body.Type;
 
-  if (!Name || !Price) {
+  if (!Name || !Price || !Type) {
     res.status(401).json({
       error: true,
-      message: "Missing Name, Price",
+      message: "Missing Name, Price, or Type",
     });
     return;
   }
 
   if (!req.params.id) {
-    res.status(401).json({ error: true, message: "Missing outfit id" });
+    res.status(401).json({ error: true, message: "Missing item id" });
     return;
   }
 
@@ -105,6 +109,7 @@ router.put("/update/:id", validIdCheck, async function (req, res, next) {
       item.Name = Name;
       item.Description = Description;
       item.Price = Price;
+      item.Type = Type;
       await item.save();
 
       res.status(200).json({ error: false, message: "Success" });
@@ -122,6 +127,7 @@ router.put("/update/:id", validIdCheck, async function (req, res, next) {
       item.Name = Name;
       item.Description = Description;
       item.Price = Price;
+      item.Type = Type
       item.ImageURL = req.file.filename;
       await item.save();
 
