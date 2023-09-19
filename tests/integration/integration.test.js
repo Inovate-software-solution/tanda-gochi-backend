@@ -1,7 +1,7 @@
 const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const request = require("supertest");
-const app = require("../../../app");
+const app = require("../../src/app");
 
 const mongod = new MongoMemoryServer();
 let server;

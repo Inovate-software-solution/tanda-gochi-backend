@@ -1,8 +1,10 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 const multer = require("multer");
-const Item = require("../schemas/Item");
-const validIdCheck = require("../middleware/validParamIdCheck");
+const Item = require("../schemas/Item.js");
+
+import * as validator from "../validators/itemValidator.js";
+import * as controller from "../controllers/itemsController.js";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -16,141 +18,29 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/", async function (req, res, next) {
-  try {
-    const items = await Item.find();
-    res.status(200).json(items);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
-  }
-});
+router.get("/", controller.getItems);
 
-router.post("/upload", upload.single("file"), async function (req, res, next) {
-  const Name = req.body.Name;
-  const Description = req.body.Description;
-  const Price = req.body.Price;
-  // Possible types are Food, Toy, and Costume
-  const Type = req.body.Type;
+router.get("/:id", validator.paramsIdValidation, controller.getItemById);
 
-  if (!Name || !Price || !Type) {
-    res.status(401).json({
-      error: true,
-      message: "Missing Name, Price, or Type",
-    });
-    return;
-  }
+router.post(
+  "/upload",
+  upload.single("file"),
+  validator.postBodyValidation,
+  controller.uploadItem
+);
 
-  if (!req.file) {
-    res.status(401).json({ error: true, message: "Missing file" });
-    return;
-  }
+router.put(
+  "/update/:id",
+  validator.putMediaTypeValidation,
+  validator.paramsIdValidation,
+  validator.putBodyValidation,
+  controller.updateItem
+);
 
-  try {
-    const item = new Item({
-      Name: Name,
-      Description: Description,
-      Price: Price,
-      Type: Type,
-      ImageURL: req.file.filename,
-    });
-    await item.save();
-    res.status(201).json({ error: false, message: "Success" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
-  }
-});
-
-router.get("/:id", validIdCheck, async function (req, res, next) {
-  if (!req.params.id) {
-    res.status(400).json({ error: true, message: "Missing item id" });
-    return;
-  }
-  try {
-    const item = await Item.findOne({ _id: req.params.id });
-    if (!outfit) {
-      res.status(404).json({ error: true, message: "Outfit do not exists" });
-      return;
-    }
-    res.status(200).json(item);
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
-  }
-});
-
-router.put("/update/:id", validIdCheck, async function (req, res, next) {
-  const Name = req.body.Name;
-  const Description = req.body.Description;
-  const Price = req.body.Price;
-  const Type = req.body.Type;
-
-  if (!Name || !Price || !Type) {
-    res.status(401).json({
-      error: true,
-      message: "Missing Name, Price, or Type",
-    });
-    return;
-  }
-
-  if (!req.params.id) {
-    res.status(401).json({ error: true, message: "Missing item id" });
-    return;
-  }
-
-  if (!req.file) {
-    try {
-      const item = await Item.findOne({ _id: req.params.id });
-      if (!item) {
-        res.status(401).json({ error: true, message: "Item do not exists" });
-        return;
-      }
-      item.Name = Name;
-      item.Description = Description;
-      item.Price = Price;
-      item.Type = Type;
-      await item.save();
-
-      res.status(200).json({ error: false, message: "Success" });
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ error: true, message: "Internal server error" });
-    }
-  } else {
-    try {
-      const item = await Item.findOne({ _id: req.params.id });
-      if (!item) {
-        res.status(401).json({ error: true, message: "Item do not exists" });
-        return;
-      }
-      item.Name = Name;
-      item.Description = Description;
-      item.Price = Price;
-      item.Type = Type
-      item.ImageURL = req.file.filename;
-      await item.save();
-
-      res.status(200).json({ error: false, message: "Success" });
-    } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ error: true, message: "Internal server error" });
-    }
-  }
-});
-
-router.delete("/delete/:id", validIdCheck, async function (req, res, next) {
-  if (!req.params.id) {
-    res.status(400).json({ error: true, message: "Missing item id" });
-    return;
-  }
-  try {
-    await Item.findOneAndDelete({ _id: req.params.id });
-    res.status(200).json({ error: false, message: "Success" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
-  }
-});
+router.delete(
+  "/delete/:id",
+  validator.paramsIdValidation,
+  controller.deleteItem
+);
 
 module.exports = router;

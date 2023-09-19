@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+  pull_request_review:
+    types:
+      - submitted
   workflow_dispatch:
 
 jobs:
@@ -32,9 +35,32 @@ jobs:
       - name: Run Tests
         run: npm test
 
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js (latest LTS version)
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18.17.1"
+
+      - name: Import .env from secrets
+        run: |
+          echo "${{ secrets.DOTENV }}" > .env
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
