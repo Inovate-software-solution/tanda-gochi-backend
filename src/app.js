@@ -4,7 +4,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-const RequestLogger = require("./src/middleware/logger");
+const RequestLogger = require("./middleware/logger");
 
 require("dotenv").config();
 
@@ -17,13 +17,13 @@ const swaggerDocument = YAML.parse(file);
 
 const mongoose = require("mongoose");
 
-const clockingRouter = require("./src/routes/clocking.js");
-const badgesRouter = require("./src/routes/badges.js");
-const usersRouter = require("./src/routes/users.js");
-const userActionsRouter = require("./src/routes/userActions.js");
-const devicesRouter = require("./src/routes/devices.js");
-const outfitsRouter = require("./src/routes/outfits.js");
-const itemsRouter = require("./src/routes/items.js");
+const clockingRouter = require("./routes/clocking.js");
+const badgesRouter = require("./routes/badges.js");
+const usersRouter = require("./routes/users.js");
+const userActionsRouter = require("./routes/userActions.js");
+const devicesRouter = require("./routes/devices.js");
+const outfitsRouter = require("./routes/outfits.js");
+const itemsRouter = require("./routes/items.js");
 
 const app = express();
 app.set("views", path.join(__dirname, "views"));

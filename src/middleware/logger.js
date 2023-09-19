@@ -1,6 +1,6 @@
-const chalk = require("chalk");
-const moment = require("moment");
-const logger = require("morgan");
+import chalk from "chalk";
+import moment from "moment";
+import logger from "morgan";
 
 const RequestLogger = logger(function (tokens, req, res) {
   return [
