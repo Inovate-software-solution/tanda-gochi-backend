@@ -65,7 +65,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(RequestLogger);
+if (process.env.NODE_ENV !== "test") {
+  app.use(RequestLogger);
+}
 
 app.get("/", (req, res, next) => {
   res.redirect("/api/documentation");

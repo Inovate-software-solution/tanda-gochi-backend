@@ -23,7 +23,7 @@ router.get("/:id", validator.paramsIdValidation, controller.getBadgeById);
 
 router.post(
   "/upload",
-  upload.single("file"),
+  validator.postMediaTypeValidation,
   validator.postBodyValidation,
   controller.uploadBadge
 );
