@@ -14,6 +14,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+export const postMediaTypeValidation = function (req, res, next) {
+  // Post only accept multipart/form-data
+  console.log(req.is("multipart/form-data"));
+  if (!req.is("multipart/form-data")) {
+    res.status(400).json({ error: true, message: "Invalid media type" });
+    return;
+  }
+  upload.single("file")(req, res, () => {
+    next();
+  });
+};
+
 export const postBodyValidation = function (req, res, next) {
   const schema = Joi.object({
     Title: Joi.string().required(),
@@ -32,10 +44,12 @@ export const putMediaTypeValidation = function (req, res, next) {
   // Check if the request is application/json or multipart/form-data
   // If it is not, return next() as it should be handled by multer instance
   if (req.is("application/json")) {
-    return (req, res, next) => next();
+    next();
   }
   if (req.is("multipart/form-data")) {
-    return upload.single("file");
+    upload.single("file")(req, res, () => {
+      next();
+    });
   }
 };
 
