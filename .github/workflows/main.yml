@@ -19,7 +19,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-
+        
+      - name: Debug file paths
+        run: ls tests/assets/
+        
       - name: Set up Node.js (latest LTS version)
         uses: actions/setup-node@v2
         with:
