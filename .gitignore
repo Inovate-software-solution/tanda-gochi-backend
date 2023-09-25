@@ -2,8 +2,4 @@
 /knex.js
 /.env
 /.env.test
-/public/uploads/badges/*
-/public/uploads/items/*
-/public/uploads/outfits/*
-/public/uploads/toys/*
 /build
