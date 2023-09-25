@@ -5,7 +5,7 @@
   "scripts": {
     "start": "babel src -d build && node ./build/server.js",
     "build": "babel src -d build",
-    "test": "cross-env NODE_ENV=test jest --verbose --watchAll=false",
+    "test": "cross-env NODE_ENV=test jest --verbose",
     "dev": "nodemon --exec babel-node ./src/server.js"
   },
   "dependencies": {
