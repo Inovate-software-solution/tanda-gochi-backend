@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 
+import authorize from "../middleware/authorize.js";
+
 import * as controller from "../controllers/badgesController.js";
 import * as validator from "../validators/badgeValidator.js";
 
@@ -17,14 +19,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get("/", controller.getAllBadges);
+router.get("/", authorize(["user"]), controller.getAllBadges);
 
-router.get("/:id", validator.paramsIdValidation, controller.getBadgeById);
+router.get(
+  "/:id",
+  validator.paramsIdValidation,
+  authorize(["user"]),
+  controller.getBadgeById
+);
 
 router.post(
   "/upload",
   validator.postMediaTypeValidation,
   validator.postBodyValidation,
+  authorize(["user", "admin"]),
   controller.uploadBadge
 );
 
@@ -33,18 +41,21 @@ router.put(
   validator.putMediaTypeValidation,
   validator.paramsIdValidation,
   validator.putBodyValidation,
+  authorize(["user", "admin"]),
   controller.updateBadge
 );
 
 router.delete(
   "/delete/:id",
   validator.paramsIdValidation,
+  authorize(["user", "admin"]),
   controller.deleteBadge
 );
 
 router.get(
   "/user/:id",
   validator.paramsIdValidation,
+  authorize(["user"]),
   controller.getBadgesByUserId
 );
 

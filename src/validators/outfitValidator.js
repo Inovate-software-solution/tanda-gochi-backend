@@ -21,6 +21,10 @@ export const postMediaTypeValidation = function (req, res, next) {
     return;
   }
   upload.single("file")(req, res, () => {
+    if (!req.file) {
+      res.status(400).json({ error: true, message: "Need to upload a file" });
+      return;
+    }
     next();
   });
 };
@@ -29,11 +33,15 @@ export const putMediaTypeValidation = function (req, res, next) {
   // Check if the request is application/json or multipart/form-data
   // If it is not, return next() as it should be handled by multer instance
   if (req.is("application/json")) {
-    next();
+    return next();
   }
   if (req.is("multipart/form-data")) {
     upload.single("file")(req, res, () => {
-      next();
+      if (!req.file) {
+        res.status(400).json({ error: true, message: "Need to upload a file" });
+        return;
+      }
+      return next();
     });
   }
 };
@@ -43,8 +51,7 @@ export const postBodyValidation = function (req, res, next) {
     Name: Joi.string().required(),
     Description: Joi.string().optional(),
     Price: Joi.number().required(),
-    file: Joi.any().required(),
-  });
+  }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: true, message: error.message });
@@ -58,7 +65,7 @@ export const putBodyValidation = function (req, res, next) {
     Name: Joi.string().required(),
     Description: Joi.string().optional(),
     Price: Joi.number().required(),
-  });
+  }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: true, message: error.message });

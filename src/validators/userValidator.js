@@ -25,7 +25,7 @@ export const postRegisterBodyValidation = function (req, res, next) {
   const schema = Joi.object({
     Email: Joi.string().email().required(),
     Password: Joi.string().min(8).required(),
-  });
+  }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: true, message: error.message });
@@ -39,7 +39,7 @@ export const putRegisterBodyValidation = function (req, res, next) {
     Email: Joi.string().email().required(),
     OldPassword: Joi.string().min(8).required(),
     NewPassword: Joi.string().min(8).required(),
-  });
+  }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: true, message: error.message });
@@ -52,7 +52,7 @@ export const postLoginBodyValidation = function (req, res, next) {
   const schema = Joi.object({
     Email: Joi.string().email().required(),
     Password: Joi.string().min(8).required(),
-  });
+  }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
     res.status(400).json({ error: true, message: error.message });
@@ -64,7 +64,7 @@ export const postLoginBodyValidation = function (req, res, next) {
 export const postUserValidation = function (req, res, next) {
   const schema = Joi.object({
     Email: Joi.string().email().required(),
-  });
+  }).unknown();
 
   const { error } = schema.validate(req.body);
 

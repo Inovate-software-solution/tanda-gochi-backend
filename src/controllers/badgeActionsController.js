@@ -1,7 +1,7 @@
 const Badge = require("../schemas/Badge");
 const User = require("../schemas/User");
 
-module.exports.grantBadge = async function (req, res, next) {
+export const grantBadge = async function (req, res, next) {
   try {
     // Check if badge exists
     const badge = await Badge.findOne({ _id: req.params.BadgeId });
@@ -33,11 +33,14 @@ module.exports.grantBadge = async function (req, res, next) {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
-module.exports.revokeBadge = async function (req, res, next) {
+export const revokeBadge = async function (req, res, next) {
   try {
     // Check if badge exists
     const badge = await Badge.findOne({ _id: req.params.BadgeId });
@@ -70,6 +73,9 @@ module.exports.revokeBadge = async function (req, res, next) {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };

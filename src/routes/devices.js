@@ -5,6 +5,8 @@ const User = require("../schemas/User");
 const checkDevice = require("../middleware/checkDevice");
 const axios = require("axios");
 
+import authorize from "../middleware/authorize.js";
+
 // Devices route is based on the Tanda API Devices endpoint.
 // Devices required to be on TandaAPI to be valid.
 // Register device just turn the deviceId into token and save it to the database.
@@ -35,7 +37,10 @@ router.post("/register", async function (req, res, next) {
     }
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 
   const TandaDevice = await axios
@@ -73,7 +78,10 @@ router.post("/register", async function (req, res, next) {
       token: DeviceToken,
     });
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 });
 
@@ -82,7 +90,10 @@ router.get("/", async function (req, res, next) {
     const devices = await Device.find();
     res.status(200).json(devices);
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 });
 
@@ -96,7 +107,10 @@ router.delete("/:id", async function (req, res, next) {
     await device.remove();
     res.status(200).json({ error: false, message: "Device deleted" });
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 });
 

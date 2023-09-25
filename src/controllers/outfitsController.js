@@ -6,7 +6,12 @@ export const getOutfits = async function (req, res, next) {
     res.status(200).json(outfits);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -20,7 +25,12 @@ export const getOutfitById = async function (req, res, next) {
     res.status(200).json(outfit);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -36,7 +46,12 @@ export const uploadOutfit = async function (req, res, next) {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -60,8 +75,31 @@ export const updateOutfit = async function (req, res, next) {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
-export const deleteOutfit = async function (req, res, next) {};
+export const deleteOutfit = async function (req, res, next) {
+  try {
+    const outfit = await Outfit.findOne({ _id: req.params.id });
+    if (!outfit) {
+      res.status(401).json({ error: true, message: "Outfit do not exists" });
+      return;
+    }
+    await outfit.delete();
+    res.status(200).json({ error: false, message: "Success" });
+  } catch (error) {
+    console.log(error.message);
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
+  }
+};

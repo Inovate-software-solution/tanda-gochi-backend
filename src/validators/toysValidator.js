@@ -1,12 +1,12 @@
-const Joi = require("joi");
 const multer = require("multer");
 const mongoose = require("mongoose");
+const Joi = require("joi");
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/uploads/badges");
+  destination: function (req, file, cb) {
+    cb(null, "./public/uploads/toys");
   },
-  filename: (req, file, cb) => {
+  filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + Math.round(Math.random() * 1e4);
     cb(null, uniqueSuffix + "-" + file.originalname);
   },
@@ -16,6 +16,29 @@ const upload = multer({ storage: storage });
 
 export const postMediaTypeValidation = function (req, res, next) {
   // Post only accept multipart/form-data
+  if (!req.is("multipart/form-data")) {
+    res.status(400).json({ error: true, message: "Invalid media type" });
+    return;
+  }
+  upload.single("file")(req, res, (err) => {
+    console.log(req.file);
+    console.log(req.body);
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+    } else if (err) {
+      console.log(err);
+    }
+    if (!req.file) {
+      res.status(400).json({ error: true, message: "Need to upload a file" });
+      return;
+    }
+    next();
+  });
+};
+
+export const putMediaTypeValidation = function (req, res, next) {
+  // Check if the request is application/json or multipart/form-data
+  // If it is not, return next() as it should be handled by multer instance
   if (req.is("application/json")) {
     return next();
   }
@@ -32,8 +55,9 @@ export const postMediaTypeValidation = function (req, res, next) {
 
 export const postBodyValidation = function (req, res, next) {
   const schema = Joi.object({
-    Title: Joi.string().required(),
+    Name: Joi.string().required(),
     Description: Joi.string().optional(),
+    Price: Joi.number().required(),
   }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
@@ -43,23 +67,11 @@ export const postBodyValidation = function (req, res, next) {
   next();
 };
 
-export const putMediaTypeValidation = function (req, res, next) {
-  // Check if the request is application/json or multipart/form-data
-  // If it is not, return next() as it should be handled by multer instance
-  if (req.is("application/json")) {
-    next();
-  }
-  if (req.is("multipart/form-data")) {
-    upload.single("file")(req, res, () => {
-      next();
-    });
-  }
-};
-
 export const putBodyValidation = function (req, res, next) {
   const schema = Joi.object({
-    Title: Joi.string().required(),
+    Name: Joi.string().required(),
     Description: Joi.string().optional(),
+    Price: Joi.number().required(),
   }).unknown();
   const { error } = schema.validate(req.body);
   if (error) {
@@ -76,7 +88,7 @@ export const paramsIdValidation = function (req, res, next) {
         if (!mongoose.Types.ObjectId.isValid(value)) {
           return helper.message("Invalid Id");
         }
-        return value;
+        return true;
       })
       .required(),
   });

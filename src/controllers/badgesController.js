@@ -6,7 +6,12 @@ export const getAllBadges = async function (req, res, next) {
     const badges = await Badge.find();
     res.status(200).json(badges);
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -19,7 +24,12 @@ export const getBadgeById = async function (req, res, next) {
     }
     res.status(200).json(badge);
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -34,7 +44,12 @@ export const uploadBadge = async function (req, res, next) {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -58,7 +73,12 @@ export const updateBadge = async function (req, res, next) {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -68,7 +88,12 @@ export const deleteBadge = async function (req, res, next) {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -82,6 +107,11 @@ export const getBadgesByUserId = async function (req, res, next) {
     res.status(200).json(user.Badges);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };

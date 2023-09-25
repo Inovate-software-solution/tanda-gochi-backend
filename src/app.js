@@ -24,6 +24,7 @@ const userActionsRouter = require("./routes/userActions.js");
 const devicesRouter = require("./routes/devices.js");
 const outfitsRouter = require("./routes/outfits.js");
 const itemsRouter = require("./routes/items.js");
+const toysRouter = require("./routes/toys.js");
 
 const app = express();
 app.set("views", path.join(__dirname, "views"));
@@ -40,7 +41,6 @@ async function connectToDatabase() {
     await mongoose.connect(process.env.DB_CONNECTION_STRING, {
       dbName: "tanda",
     });
-    console.log("Connected to MongoDB");
   } catch (error) {
     console.error("Could not connect to MongoDB", error);
     process.exit(1); // Exit the process with failure code
@@ -88,6 +88,7 @@ app.use("/api/devices", devicesRouter);
 app.use("/api/badges", badgesRouter);
 app.use("/api/outfits", outfitsRouter);
 app.use("/api/items", itemsRouter);
+app.use("/api/toys", toysRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
