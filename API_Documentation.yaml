@@ -14,360 +14,402 @@ servers:
 
 paths:
   # Devices
-  /Devices:
-    get:
-      summary: Get all registered devices
-      tags:
-        - Devices
-      responses:
-        '200':
-          description: "Returns all registered devices"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  example: 
-                    _id: "123123123"
-                    Name: "Front-door device"
-                    Description: "This is device at the front door"
-                    Status: "ACTIVE"
-                    AuthToken: "1234567890"
-        "401":
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
+  # /Devices:
+  #   get:
+  #     summary: Get all registered devices
+  #     tags:
+  #       - Devices
+  #     responses:
+  #       '200':
+  #         description: "Returns all registered devices"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 type: object
+  #                 example: 
+  #                   _id: "123123123"
+  #                   Name: "Front-door device"
+  #                   Description: "This is device at the front door"
+  #                   Status: "ACTIVE"
+  #                   AuthToken: "1234567890"
+  #       "401":
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
 
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
-      security:
-        - bearerAuth: []
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
+  #     security:
+  #       - bearerAuth: []
   
-  /Devices/{_id}:
-    get:
-      summary: Get device by ID
-      tags:
-        - Devices
-      parameters:
-        - in: path
-          name: _id
-          schema:
-            type: integer
-          required: true
-          description: Generated ID of the device to get
-      responses:
-        '200':
-          description: Get all registered devices
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                    _id: 1
-                    Name: "Front-door device"
-                    Description: "This is device at the front door"
-                    Status: "ACTIVE"
-                    AuthToken: "1234567890"
-        "401":
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
-        "404":
-          description: "Device not found"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Device not found"
+  # /Devices/{_id}:
+  #   get:
+  #     summary: Get device by ID
+  #     tags:
+  #       - Devices
+  #     parameters:
+  #       - in: path
+  #         name: _id
+  #         schema:
+  #           type: integer
+  #         required: true
+  #         description: Generated ID of the device to get
+  #     responses:
+  #       '200':
+  #         description: Get all registered devices
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example:
+  #                   _id: 1
+  #                   Name: "Front-door device"
+  #                   Description: "This is device at the front door"
+  #                   Status: "ACTIVE"
+  #                   AuthToken: "1234567890"
+  #       "401":
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
+  #       "404":
+  #         description: "Device not found"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Device not found"
 
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
-      security:
-        - bearerAuth: []
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
+  #     security:
+  #       - bearerAuth: []
     
-  /Devices/register:
-    post:
-      description: Register a new device
-      tags:
-      - Devices
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                Name:
-                  type: string
-                  example: "Front-door device"
-                Description:
-                  type: string
-                  example: "This is device at the front door"
-                Status:
-                  type: string
-                  example: "ACTIVE"
-                AuthToken:
-                  type: string
-                  example: "1234567890"
-              required:
-                - Name
-                - Description
-                - Status
-                - AuthToken
-      responses:
-        '201':
-          description: Device added successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: false
-                  message: "Device added successfully!"
-        '401':
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
-        '400':
-          description: "Bad request"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Detail of missing or mailformed request body"
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
-      security:
-          - bearerAuth: []
+  # /Devices/register:
+  #   post:
+  #     description: Register a new device
+  #     tags:
+  #     - Devices
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               Name:
+  #                 type: string
+  #                 example: "Front-door device"
+  #               Description:
+  #                 type: string
+  #                 example: "This is device at the front door"
+  #               Status:
+  #                 type: string
+  #                 example: "ACTIVE"
+  #               AuthToken:
+  #                 type: string
+  #                 example: "1234567890"
+  #             required:
+  #               - Name
+  #               - Description
+  #               - Status
+  #               - AuthToken
+  #     responses:
+  #       '201':
+  #         description: Device added successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: false
+  #                 message: "Device added successfully!"
+  #       '401':
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
+  #       '400':
+  #         description: "Bad request"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Detail of missing or mailformed request body"
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
+  #     security:
+  #         - bearerAuth: []
 
-  /Devices/update/{_id}:
-    put:
-      tags:
-      - Devices
-      parameters:
-        - in: path
-          name: _id
-          schema:
-            type: integer
-          required: true
-          description: Generated ID of the device to update
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                Name:
-                  type: string
-                  example: "Front-door device"
-                Description:
-                  type: string
-                  example: "This is device at the front door"
-                Status:
-                  type: string
-                  example: "ACTIVE"
-                AuthToken:
-                  type: string
-                  example: "1234567890"
-              required:
-                - Name
-                - Description
-                - Status
-                - AuthToken
-      responses:
-        '201':
-          description: Device updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: false
-                  message: "Device updated successfully!"
-        '401':
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
-        '400':
-          description: "Bad request"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Detail of missing or mailformed request body"
-        '404':
-          description: "Device not found"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Device not found"
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
-      security:
-          - bearerAuth: []
+  # /Devices/update/{_id}:
+  #   put:
+  #     tags:
+  #     - Devices
+  #     parameters:
+  #       - in: path
+  #         name: _id
+  #         schema:
+  #           type: integer
+  #         required: true
+  #         description: Generated ID of the device to update
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               Name:
+  #                 type: string
+  #                 example: "Front-door device"
+  #               Description:
+  #                 type: string
+  #                 example: "This is device at the front door"
+  #               Status:
+  #                 type: string
+  #                 example: "ACTIVE"
+  #               AuthToken:
+  #                 type: string
+  #                 example: "1234567890"
+  #             required:
+  #               - Name
+  #               - Description
+  #               - Status
+  #               - AuthToken
+  #     responses:
+  #       '201':
+  #         description: Device updated successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: false
+  #                 message: "Device updated successfully!"
+  #       '401':
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
+  #       '400':
+  #         description: "Bad request"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Detail of missing or mailformed request body"
+  #       '404':
+  #         description: "Device not found"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Device not found"
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
+  #     security:
+  #         - bearerAuth: []
 
-  /Devices/delete/{_id}:
-    delete:
-      tags:
-      - Devices
-      parameters:
-        - in: path
-          name: _id
-          schema:
-            type: integer
-          required: true
-          description: Generated ID of the device to delete
-      responses:
-        '201':
-          description: Device deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: false
-                  message: "Device deleted successfully!"
-        '401':
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
-        '404':
-          description: "Device not found"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Device not found"
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
+  # /Devices/delete/{_id}:
+  #   delete:
+  #     tags:
+  #     - Devices
+  #     parameters:
+  #       - in: path
+  #         name: _id
+  #         schema:
+  #           type: integer
+  #         required: true
+  #         description: Generated ID of the device to delete
+  #     responses:
+  #       '201':
+  #         description: Device deleted successfully
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: false
+  #                 message: "Device deleted successfully!"
+  #       '401':
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
+  #       '404':
+  #         description: "Device not found"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Device not found"
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
 
-      security:
-          - bearerAuth: []
+  #     security:
+  #         - bearerAuth: []
             
-  /Devices/CheckToken:
+  # /Devices/CheckToken:
+  #   post:
+  #     tags:
+  #     - Devices
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             properties:
+  #               AuthToken:
+  #                 type: string
+  #                 example: "1234567890"
+  #             required:
+  #               - AuthToken
+  #     responses:
+  #       '201':
+  #         description: Token is valid
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: false
+  #                 message: "Token is valid!"
+  #       '401':
+  #         description: "Unauthorized"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Unauthorized"
+  #       '400':
+  #         description: "Bad request"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Detail of missing or mailformed request body"
+  #       '500':
+  #         description: "Internal server error"
+  #         content:
+  #           application/json:
+  #             schema:y
+  #               type: object
+  #               example: 
+  #                 error: true
+  #                 message: "Internal server error"
+
+  /Clocking/clockin:
     post:
+      summary: Perfom clock in/out for user and calculate score/credit
       tags:
-      - Devices
+        - Clocking
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                AuthToken:
+                UserId:
+                  type: string
+                  example: "123123123 (Id generated by MongoDB)"
+                DeviceId:
+                  type: string
+                  example: "123123123 (Id generated by MongoDB)"
+                Type:
+                  type: string
+                  example: "IN/OUT"
+                DeviceToken:
                   type: string
                   example: "1234567890"
               required:
-                - AuthToken
+                - UserId
+                - DeviceId
+                - DeviceToken
+                - Type
       responses:
-        '201':
-          description: Token is valid
+        "200":
+          description: Clock in/out successfully
           content:
             application/json:
               schema:
                 type: object
                 example: 
                   error: false
-                  message: "Token is valid!"
-        '401':
-          description: "Unauthorized"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Unauthorized"
-        '400':
-          description: "Bad request"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Detail of missing or mailformed request body"
-        '500':
-          description: "Internal server error"
-          content:
-            application/json:
-              schema:
-                type: object
-                example: 
-                  error: true
-                  message: "Internal server error"
-
+                  message: "Clock in/out successfully!"
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
   # Users
   /Users:
     get:
@@ -673,9 +715,6 @@ paths:
             schema:
               type: object
               properties:
-                UserId:
-                  type: string
-                  example: "123123123 (Id generated by MongoDB)"
                 ItemId:
                   type: string
                   example: "311231212 (Id generated by MongoDB)"
@@ -683,7 +722,6 @@ paths:
                   type: integer
                   example: 10
               required:
-                - UserId
                 - ItemId
                 - Quantity
       responses:
@@ -736,14 +774,10 @@ paths:
             schema:
               type: object
               properties:
-                UserId:
-                  type: string
-                  example: "123123123 (Id generated by MongoDB)"
                 ItemId:
                   type: string
                   example: "311231212 (Id generated by MongoDB)"
               required:
-                - UserId
                 - ItemId
       responses:
         '200':
@@ -808,14 +842,10 @@ paths:
             schema:
               type: object
               properties:
-                UserId:
-                  type: string
-                  example: "123123123 (Id generated by MongoDB)"
                 OutfitId:
                   type: string
                   example: "311231212 (Id generated by MongoDB)"
               required:
-                - UserId
                 - OutfitId
       responses:
         '200':
@@ -867,14 +897,10 @@ paths:
             schema:
               type: object
               properties:
-                UserId:
-                  type: string
-                  example: "123123123 (Id generated by MongoDB)"
                 OutfitId:
                   type: string
                   example: "311231212 (Id generated by MongoDB)"
               required:
-                - UserId
                 - OutfitId
       responses:
         '200':
@@ -931,6 +957,60 @@ paths:
       security:
           - bearerAuth: []
 
+  /User/action/buy/toy:
+    post:
+      tags:
+      - User Actions
+      summary: Buy an toy
+      description: Buy an toy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                OutfitId:
+                  type: string
+                  example: "311231212 (Id generated by MongoDB)"
+              required:
+                - OutfitId
+      responses:
+        '200':
+          description: The toy bought successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Outfit bought successfully!"
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not have enough credit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                userNotEnoughCredit:
+                  summary: "User Does Not Have Enough Credit"
+                  value:
+                    error: true
+                    message: "User does not have enough credit."
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+          - bearerAuth: []
 
   # Badges
   /Badges:
@@ -1530,7 +1610,7 @@ paths:
       security:
         - bearerAuth: []
   
-  # Outfits
+  # Toys
   /outfits:
     get:
       summary: Get all outfits
@@ -1544,7 +1624,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Item'
+                  $ref: '#/components/schemas/Toy'
                     
         "401":
           $ref: '#/components/responses/UnauthorizedError'
@@ -1572,7 +1652,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Item'
+                $ref: '#/components/schemas/Toy'
         "401":
           $ref: '#/components/responses/UnauthorizedError'
         "404":
@@ -1762,6 +1842,239 @@ paths:
                   message: "Internal server error"
       security:
         - bearerAuth: []
+    
+  # Toys
+  /toys:
+    get:
+      summary: Get all toys
+      tags:
+        - Toys
+      responses:
+        '200':
+          description: Returns all registered toys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+                    
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+  /toys/{_id}:
+    get:
+      summary: Get toy by ID
+      tags:
+        - Toys
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+          required: true
+          description: ID of the toy that generated by MongoDB
+      responses:
+        '200':
+          description: Returns all registered toys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Toy'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "404":
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+  
+  /toys/upload:
+    post:
+      summary: Create an toy
+      tags:
+      - Toys
+      requestBody:
+        description: |
+          - This endpoint only accpet multipart/form-data as it is an upload. 
+          
+          - If you are using multipart/form-data, please use the key `file` for the image file.
+
+          - `Description` is optional.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                Name:
+                  type: string
+                  example: "Toy 1"
+                Description:
+                  type: string
+                  example: "This is toy 1"
+                Price:
+                  type: integer
+                  example: 100
+              required:
+                - Name
+                - Description
+                - Price
+                - file
+      responses:
+        '201':
+          description: Toy created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Toy created successfully!"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+          - bearerAuth: []
+
+  /toys/update/{_id}:
+    put:
+      summary: Update an Toy
+      tags:
+      - Toys
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+          required: true
+          description: Generated ID of the Toy to update 
+      requestBody:
+        description: |
+          - This endpoint can accpet both multipart/form-data and application/json as it is edit. 
+          
+          - If you are using multipart/form-data, please use the key `file` for the image file.
+
+          - `file` is optional
+
+          - `Description` is optional.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                Name:
+                  type: string
+                  example: "Toy 1"
+                Description:
+                  type: string
+                  example: "This is Toy 1"
+                Price:
+                  type: integer
+                  example: 100
+          application/json:
+            schema:
+              type: object
+              properties:
+                Name:
+                  type: string
+                  example: "Toy 1"
+                Description:
+                  type: string
+                  example: "This is Toy 1"
+                Price:
+                  type: integer
+                  example: 100
+              required:
+                - Name
+                - Description
+                - Price     
+      responses:
+        '200':
+          description: Toy updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Toy updated successfully!"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400': 
+          $ref: '#/components/responses/BadRequestError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+        
+  /toys/delete/{_id}:
+    delete:
+      summary: Delete an Toy
+      tags:
+      - Toys
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: integer
+          required: true
+          description: Generated ID of the Toy to delete
+      responses:
+        '200':
+          description: Toy deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Toy deleted successfully!"
+        '401':
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Unauthorized"
+        '404':
+          description: "Toy not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Toy not found"
+        '500':
+          description: "Internal server error"
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: true
+                  message: "Internal server error"
+      security:
+        - bearerAuth: []
 
 components:
   schemas:
@@ -1799,7 +2112,7 @@ components:
           items:
             type: object
             properties:
-              ItemId:
+              ToyId:
                 type: string
                 example: "234234"
               quantity:
@@ -1853,6 +2166,25 @@ components:
           example: "Imageabcde.png"
 
     Outfit:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "An Id generated by MongoDB"
+        Name:
+          type: string
+          example: "Outfit 1"
+        Description:
+          type: string
+          example: "This is outfit 1"
+        Price:
+          type: integer
+          example: 100
+        ImageURL:
+          type: string
+          example: "Imageabcde.png"
+    
+    Toy:
       type: object
       properties:
         _id:

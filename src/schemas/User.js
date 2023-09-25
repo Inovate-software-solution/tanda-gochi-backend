@@ -25,7 +25,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Badges",
         required: true,
-        unique: true,
       },
       DateAwarded: {
         type: Date,
@@ -40,12 +39,26 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Items",
         required: true,
-        unique: true,
       },
       Quantity: {
         type: Number,
         required: true,
         default: 0,
+      },
+    },
+  ],
+
+  ToysInventory: [
+    {
+      ToyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Toys",
+        required: true,
+      },
+      Equipped: {
+        type: Boolean,
+        required: true,
+        default: false,
       },
     },
   ],
@@ -56,7 +69,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Outfits",
         required: true,
-        unique: true,
       },
       Equipped: {
         type: Boolean,

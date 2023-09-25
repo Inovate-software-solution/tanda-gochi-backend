@@ -2,7 +2,6 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../../src/app");
-const User = require("../../src/schemas/User");
 
 require("dotenv").config();
 
@@ -19,7 +18,6 @@ beforeAll(async () => {
     await mongoose.connect(process.env.DB_CONNECTION_STRING, {
       dbName: "tanda",
     });
-    console.log("Connected to test MongoDB");
   } catch (error) {
     console.error("Could not connect to test MongoDB", error);
     process.exit(1); // Exit the process with failure code

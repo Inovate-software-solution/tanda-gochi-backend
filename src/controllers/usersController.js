@@ -8,7 +8,10 @@ export const getUsers = async function (req, res, next) {
     res.status(200).json(users);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -22,7 +25,10 @@ export const getUserById = async function (req, res, next) {
     res.status(200).json(user);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -36,22 +42,50 @@ export const postLogin = async function (req, res, next) {
 
     const match = await bcrypt.compare(req.body.Password, user.Password);
     if (!match) {
-      res.status(401).json({ error: true, message: "Wrong password" });
+      res
+        .status(401)
+        .json({ error: true, message: "Invalid Username or Password" });
       return;
     }
+    // Check for admin role
+    const Scopes = ["user"];
 
-    const token = req.jwt.sign(
-      { Email: req.body.Email },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: 86400,
-      }
-    );
+    const response = await axios
+      .get(req.TandaAPI + "/users", {
+        headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN },
+      })
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log(error.response.data);
+        res.status(error.response.status).json(error.response.data);
+        return;
+      });
+
+    const tanda_user = response.find((e) => e.email === req.body.Email);
+
+    if (tanda_user.platform_role_ids.includes(967961)) {
+      Scopes.push("admin");
+    }
+
+    // Payload for JWT that will be encrypted
+    const payload = {
+      UserId: user._id,
+      EmployeeId: user.EmployeeId,
+      Email: req.body.Email,
+      Scopes: Scopes,
+    };
+
+    const token = req.jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: 86400,
+    });
 
     res.status(200).json({ error: false, token: token });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -73,7 +107,10 @@ export const postRegister = async function (req, res, next) {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -92,7 +129,10 @@ export const postCheckUser = async function (req, res, next) {
       .json({ error: false, message: "User exists and registered" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -118,15 +158,26 @@ export const putChangePassword = async function (req, res, next) {
 
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
 export const deleteUserById = async function (req, res, next) {
   try {
-    await User.findOneAndDelete({ _id: id });
+    const user = await User.findOneAndDelete({ _id: id });
+    if (!user) {
+      res.status(401).json({ error: true, message: "User do not exists" });
+      return;
+    }
+
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };

@@ -1,13 +1,20 @@
 import express from "express";
 
+import authorize from "../middleware/authorize.js";
+
 const router = express.Router();
 
 import * as validator from "../validators/userValidator";
 import * as controller from "../controllers/usersController";
 
-router.get("/", controller.getUsers);
+router.get("/", authorize(["user", "admin"]), controller.getUsers);
 
-router.get("/:id", validator.paramsIdValidation, controller.getUserById);
+router.get(
+  "/:id",
+  validator.paramsIdValidation,
+  authorize(["user", "admin"]),
+  controller.getUserById
+);
 
 router.post("/login", validator.postLoginBodyValidation, controller.postLogin);
 
@@ -28,12 +35,14 @@ router.post(
 router.put(
   "/changePassword",
   validator.putRegisterBodyValidation,
+  authorize(["user"]),
   controller.putChangePassword
 );
 
 router.delete(
   "/delete/:id",
   validator.paramsIdValidation,
+  authorize(["user", "admin"]),
   controller.deleteUserById
 );
 

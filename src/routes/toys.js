@@ -3,16 +3,16 @@ const router = express.Router();
 
 import authorize from "../middleware/authorize.js";
 
-import * as validator from "../validators/itemValidator.js";
-import * as controller from "../controllers/itemsController.js";
+import * as controller from "../controllers/toysController.js";
+import * as validator from "../validators/toysValidator.js";
 
-router.get("/", authorize(["user"]), controller.getItems);
+router.get("/", authorize(["user"]), controller.getToys);
 
 router.get(
   "/:id",
   validator.paramsIdValidation,
   authorize(["user"]),
-  controller.getItemById
+  controller.getToyById
 );
 
 router.post(
@@ -20,23 +20,23 @@ router.post(
   validator.postMediaTypeValidation,
   validator.postBodyValidation,
   authorize(["user", "admin"]),
-  controller.uploadItem
+  controller.uploadToy
 );
 
 router.put(
-  "/update/:id",
-  validator.putMediaTypeValidation,
+  "/edit/:id",
   validator.paramsIdValidation,
+  validator.putMediaTypeValidation,
   validator.putBodyValidation,
   authorize(["user", "admin"]),
-  controller.updateItem
+  controller.updateToy
 );
 
 router.delete(
   "/delete/:id",
   validator.paramsIdValidation,
   authorize(["user", "admin"]),
-  controller.deleteItem
+  controller.deleteToy
 );
 
 module.exports = router;

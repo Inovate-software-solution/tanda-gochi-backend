@@ -6,7 +6,12 @@ export const getItems = async (req, res, next) => {
     res.status(200).json(items);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -20,7 +25,12 @@ export const getItemById = async (req, res, next) => {
     res.status(200).json(item);
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -36,7 +46,12 @@ export const uploadItem = async (req, res, next) => {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -60,7 +75,12 @@ export const updateItem = async (req, res, next) => {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
 
@@ -70,6 +90,11 @@ export const deleteItem = async (req, res, next) => {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res.status(500).json({ error: true, message: "Internal server error" });
+    res
+      .status(500)
+      .json({
+        error: true,
+        message: "Internal server error: " + error.message,
+      });
   }
 };
