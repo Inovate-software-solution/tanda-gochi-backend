@@ -21,6 +21,8 @@ export const postMediaTypeValidation = function (req, res, next) {
     return;
   }
   upload.single("file")(req, res, () => {
+    console.log(req.file);
+    console.log(req.body);
     if (!req.file) {
       res.status(400).json({ error: true, message: "Need to upload a file" });
       return;
