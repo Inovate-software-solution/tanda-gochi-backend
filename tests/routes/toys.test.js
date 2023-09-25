@@ -67,6 +67,7 @@ afterAll(async () => {
 // ###############################################
 describe("POST /api/toys/upload", () => {
   describe("Request Validation Section", () => {
+    console.log(`Attaching file from: ${filePath}`);
     test("should return 400 if wrong media type", async () => {
       const response = await server
         .post("/api/toys/upload")
