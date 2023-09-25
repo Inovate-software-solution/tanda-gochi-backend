@@ -69,8 +69,8 @@ describe("POST /api/toys/upload", () => {
         .post("/api/toys/upload")
         .set("media-type", "application/json") // intentionally setting the wrong media type
         .set("Authorization", "Bearer " + AuthToken_Admin);
-
       expect(response.statusCode).toBe(400);
+      console.log(response.body);
     });
 
     test("should return 400 if no file provided", async () => {
@@ -82,6 +82,7 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description")
         .field("Price", 100);
       expect(response.statusCode).toBe(400);
+      console.log(response.body);
     });
 
     test("should return 400 if missing Name field", async () => {
@@ -93,6 +94,7 @@ describe("POST /api/toys/upload", () => {
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
       expect(response.statusCode).toBe(400);
+      console.log(response.body);
     });
 
     test("should return 400 if missing Price field", async () => {
@@ -104,6 +106,7 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description")
         .attach("file", "tests/assets/test_dummy.png");
       expect(response.statusCode).toBe(400);
+      console.log(response.body);
     });
   });
 
@@ -118,6 +121,7 @@ describe("POST /api/toys/upload", () => {
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
       expect(response.statusCode).toBe(401);
+      console.log(response.body);
     });
 
     test("should return 401 if the provided token is invalid", async () => {
@@ -130,6 +134,7 @@ describe("POST /api/toys/upload", () => {
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
       expect(response.statusCode).toBe(401);
+      console.log(response.body);
     });
   });
 
@@ -144,6 +149,7 @@ describe("POST /api/toys/upload", () => {
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
       expect(response.statusCode).toBe(201);
+      console.log(response.body);
       // add some more toys if the test is passed for other tests
       await server
         .post("/api/toys/upload")
@@ -188,6 +194,7 @@ describe("GET /api/toys", () => {
         .get("/api/toys")
         .set("Authorization", "Bearer " + AuthToken_User);
       expect(response.statusCode).toBe(200);
+      console.log(response.body);
     });
 
     test("should return 200 for user", async () => {
@@ -195,6 +202,7 @@ describe("GET /api/toys", () => {
         .get("/api/toys")
         .set("Authorization", "Bearer " + AuthToken_Admin);
       expect(response.statusCode).toBe(200);
+      console.log(response.body);
     });
   });
 
@@ -208,6 +216,7 @@ describe("GET /api/toys", () => {
       expect(response.statusCode).toBe(200);
       expect(response.body.length).toBe(4);
       expect(response.body[0].Name).toBe(toys[0].Name);
+      console.log(response.body);
     });
   });
 });
@@ -255,119 +264,6 @@ describe("GET /api/toys/:id", () => {
       expect(response.body.Name).toBe(toys[0].Name);
       expect(response.body.Description).toBe(toys[0].Description);
       expect(response.body.Price).toBe(toys[0].Price);
-    });
-  });
-});
-
-describe("PUT /api/toys/update/:id", () => {
-  describe("Request Validation Section", () => {
-    test("should return 400 if wrong media type", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "application/json") // intentionally setting the wrong media type
-        .set("Authorization", "Bearer " + AuthToken_Admin);
-
-      expect(response.statusCode).toBe(400);
-    });
-
-    test("should return 400 if no file provided", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
-        .field("Description", "Test Description")
-        .field("Price", 100);
-      expect(response.statusCode).toBe(400);
-    });
-
-    test("should return 400 if missing Name field", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Description", "Test Description")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(400);
-    });
-
-    test("should return 400 if missing Price field", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
-        .field("Description", "Test Description")
-        .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(400);
-    });
-  });
-
-  describe("Authorization section", () => {
-    test("should return 403 if the user do not have permission", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_User)
-        .field("Name", "Test Toy")
-        .field("Description", "Test Description")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(401);
-    });
-
-    test("should return 401 if the provided token is invalid", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + "SomeRandomToken")
-        .field("Name", "Test Toy")
-        .field("Description", "Test Description")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(401);
-    });
-  });
-
-  describe("Controller Sections", () => {
-    test("should return 201 if everything is correct", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 1")
-        .field("Description", "Test Description 1")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(201);
-      // add some more toys if the test is passed for other tests
-      await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 2")
-        .field("Description", "Test Description 2")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-
-      await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 3")
-        .field("Description", "Test Description 3")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
-
-      await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 4")
-        .field("Description", "Test Description 4")
-        .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
     });
   });
 });
