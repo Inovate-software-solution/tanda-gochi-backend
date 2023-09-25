@@ -6,12 +6,12 @@ const Toy = require("../../src/schemas/Toy");
 const path = require("path");
 require("dotenv").config();
 
-const fs = require("fs");
+// const fs = require("fs");
 
-console.log(__dirname);
-const dummyTestImage = path.join(__dirname, "../assets/test_dummy.png");
+// console.log(__dirname);
+// const dummyTestImage = path.join(__dirname, "../assets/test_dummy.png");
 
-let fileBuffer;
+// let fileBuffer;
 
 const mongod = new MongoMemoryServer();
 let server;
@@ -26,8 +26,8 @@ beforeAll(async () => {
   process.env.DB_CONNECTION_STRING = await mongod.getUri();
 
   try {
-    fileBuffer = fs.readFileSync(dummyTestImage);
-    console.log("Read file:", fileBuffer);
+    // fileBuffer = fs.readFileSync(dummyTestImage);
+    // console.log("Read file:", fileBuffer);
   } catch (err) {
     console.error("An error occurred while reading the file:", err);
   }
@@ -105,7 +105,7 @@ describe("POST /api/toys/upload", () => {
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
@@ -117,7 +117,7 @@ describe("POST /api/toys/upload", () => {
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
@@ -132,7 +132,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(401);
     });
@@ -145,7 +145,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(401);
     });
@@ -160,7 +160,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 1")
         .field("Description", "Test Description 1")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(201);
       // add some more toys if the test is passed for other tests
@@ -171,7 +171,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 2")
         .field("Description", "Test Description 2")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
 
       await server
         .post("/api/toys/upload")
@@ -180,7 +180,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 3")
         .field("Description", "Test Description 3")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
 
       await server
         .post("/api/toys/upload")
@@ -189,7 +189,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 4")
         .field("Description", "Test Description 4")
         .field("Price", 100)
-        .attach("file", fileBuffer, "test_dummy.png");
+        .attach("file", "tests/assets/test_dummy.png");
     });
   });
 });
