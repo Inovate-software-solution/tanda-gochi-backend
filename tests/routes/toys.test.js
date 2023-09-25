@@ -57,14 +57,6 @@ beforeAll(async () => {
     Password: process.env.TANDA_ACCOUNT_PASSWORD_USER,
   });
   AuthToken_User = response2.body.token;
-
-  fs.readFile(dummyTestImage, (err, data) => {
-    if (err) {
-      console.error("Could not read file:", err);
-    } else {
-      console.log("Read file:", data);
-    }
-  });
 });
 
 afterAll(async () => {
@@ -78,8 +70,6 @@ afterAll(async () => {
 // ###############################################
 describe("POST /api/toys/upload", () => {
   describe("Request Validation Section", () => {
-    console.log(__dirname);
-    console.log(`Attaching file from: ${dummyTestImage}`);
     test("should return 400 if wrong media type", async () => {
       const response = await server
         .post("/api/toys/upload")
@@ -97,18 +87,22 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100);
-      console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
 
     test("should return 400 if missing Name field", async () => {
+      const fileBuffer = await fs.readFile(dummyTestImage);
       const response = await server
         .post("/api/toys/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", dummyTestImage);
+        .attach("file", fileBuffer, {
+          // Manually set file details
+          filename: "test_dummy.png",
+          contentType: "image/png",
+        });
       console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
