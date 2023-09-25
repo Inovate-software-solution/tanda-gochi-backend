@@ -25,7 +25,12 @@ beforeAll(async () => {
   await mongod.start();
   process.env.DB_CONNECTION_STRING = await mongod.getUri();
 
-  fileBuffer = fs.readFileSync(dummyTestImage);
+  try {
+    fileBuffer = fs.readFileSync(dummyTestImage);
+    console.log("Read file:", fileBuffer);
+  } catch (err) {
+    console.error("An error occurred while reading the file:", err);
+  }
 
   try {
     await mongoose.connect(process.env.DB_CONNECTION_STRING, {
