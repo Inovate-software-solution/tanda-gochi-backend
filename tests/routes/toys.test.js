@@ -5,6 +5,7 @@ const app = require("../../src/app");
 const Toy = require("../../src/schemas/Toy");
 const path = require("path");
 
+console.log(__dirname);
 const dummyTestImage = path.join(__dirname, "../assets/test_dummy.png");
 
 require("dotenv").config();
