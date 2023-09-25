@@ -5,6 +5,8 @@ const app = require("../../src/app");
 const Toy = require("../../src/schemas/Toy");
 const path = require("path");
 
+const fs = require("fs");
+
 console.log(__dirname);
 const dummyTestImage = path.join(__dirname, "../assets/test_dummy.png");
 
@@ -55,6 +57,14 @@ beforeAll(async () => {
     Password: process.env.TANDA_ACCOUNT_PASSWORD_USER,
   });
   AuthToken_User = response2.body.token;
+
+  fs.readFile(dummyTestImage, (err, data) => {
+    if (err) {
+      console.error("Could not read file:", err);
+    } else {
+      console.log("Read file:", data);
+    }
+  });
 });
 
 afterAll(async () => {
