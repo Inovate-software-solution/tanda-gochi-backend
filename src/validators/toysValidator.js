@@ -20,9 +20,14 @@ export const postMediaTypeValidation = function (req, res, next) {
     res.status(400).json({ error: true, message: "Invalid media type" });
     return;
   }
-  upload.single("file")(req, res, () => {
+  upload.single("file")(req, res, (err) => {
     console.log(req.file);
     console.log(req.body);
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+    } else if (err) {
+      console.log(err);
+    }
     if (!req.file) {
       res.status(400).json({ error: true, message: "Need to upload a file" });
       return;
