@@ -69,8 +69,8 @@ describe("POST /api/toys/upload", () => {
         .post("/api/toys/upload")
         .set("media-type", "application/json") // intentionally setting the wrong media type
         .set("Authorization", "Bearer " + AuthToken_Admin);
-      expect(response.statusCode).toBe(400);
       console.log(response.body);
+      expect(response.statusCode).toBe(400);
     });
 
     test("should return 400 if no file provided", async () => {
@@ -81,8 +81,8 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100);
-      expect(response.statusCode).toBe(400);
       console.log(response.body);
+      expect(response.statusCode).toBe(400);
     });
 
     test("should return 400 if missing Name field", async () => {
@@ -93,8 +93,8 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description")
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(400);
       console.log(response.body);
+      expect(response.statusCode).toBe(400);
     });
 
     test("should return 400 if missing Price field", async () => {
@@ -105,8 +105,8 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(400);
       console.log(response.body);
+      expect(response.statusCode).toBe(400);
     });
   });
 
@@ -120,8 +120,8 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description")
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(401);
       console.log(response.body);
+      expect(response.statusCode).toBe(401);
     });
 
     test("should return 401 if the provided token is invalid", async () => {
@@ -133,8 +133,8 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description")
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(401);
       console.log(response.body);
+      expect(response.statusCode).toBe(401);
     });
   });
 
@@ -148,8 +148,8 @@ describe("POST /api/toys/upload", () => {
         .field("Description", "Test Description 1")
         .field("Price", 100)
         .attach("file", "tests/assets/test_dummy.png");
-      expect(response.statusCode).toBe(201);
       console.log(response.body);
+      expect(response.statusCode).toBe(201);
       // add some more toys if the test is passed for other tests
       await server
         .post("/api/toys/upload")
@@ -193,16 +193,16 @@ describe("GET /api/toys", () => {
       const response = await server
         .get("/api/toys")
         .set("Authorization", "Bearer " + AuthToken_User);
-      expect(response.statusCode).toBe(200);
       console.log(response.body);
+      expect(response.statusCode).toBe(200);
     });
 
     test("should return 200 for user", async () => {
       const response = await server
         .get("/api/toys")
         .set("Authorization", "Bearer " + AuthToken_Admin);
-      expect(response.statusCode).toBe(200);
       console.log(response.body);
+      expect(response.statusCode).toBe(200);
     });
   });
 
@@ -213,10 +213,10 @@ describe("GET /api/toys", () => {
       const response = await server
         .get("/api/toys")
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(200);
       expect(response.body.length).toBe(4);
       expect(response.body[0].Name).toBe(toys[0].Name);
-      console.log(response.body);
     });
   });
 });
@@ -229,6 +229,7 @@ describe("GET /api/toys/:id", () => {
       const response = await server
         .get("/api/toys/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
   });
@@ -240,6 +241,7 @@ describe("GET /api/toys/:id", () => {
       const response = await server
         .get("/api/toys/" + toyId)
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(200);
     });
 
@@ -249,6 +251,7 @@ describe("GET /api/toys/:id", () => {
       const response = await server
         .get("/api/toys/" + toyId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
+      console.log(response.body);
       expect(response.statusCode).toBe(200);
     });
   });
@@ -260,6 +263,7 @@ describe("GET /api/toys/:id", () => {
       const response = await server
         .get("/api/toys/" + toyId)
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(200);
       expect(response.body.Name).toBe(toys[0].Name);
       expect(response.body.Description).toBe(toys[0].Description);
@@ -276,6 +280,7 @@ describe("DELETE /api/toys/delete/:id", () => {
       const response = await server
         .delete("/api/toys/delete/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
   });
@@ -287,6 +292,7 @@ describe("DELETE /api/toys/delete/:id", () => {
       const response = await server
         .delete("/api/toys/delete/" + toyId)
         .set("Authorization", "Bearer " + AuthToken_User);
+      console.log(response.body);
       expect(response.statusCode).toBe(401);
     });
   });
@@ -298,6 +304,7 @@ describe("DELETE /api/toys/delete/:id", () => {
       const response = await server
         .delete("/api/toys/delete/" + toyId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
+      console.log(response.body);
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("Success");
       const toy = await Toy.findOne({ _id: toyId });
