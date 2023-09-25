@@ -19,15 +19,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
-        
-      - name: debug folder structure
-        run: |
-          ls
-          cd ..
-          ls
-          cd /home/runner/work/tanda-gochi-backend/tanda-gochi-backend/tests/assets/test_dummy.png
-          ls
-        
+
       - name: Set up Node.js (latest LTS version)
         uses: actions/setup-node@v2
         with:
