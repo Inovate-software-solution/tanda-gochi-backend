@@ -4,13 +4,14 @@ const request = require("supertest");
 const app = require("../../src/app");
 const Toy = require("../../src/schemas/Toy");
 const path = require("path");
+require("dotenv").config();
 
 const fs = require("fs");
 
 console.log(__dirname);
 const dummyTestImage = path.join(__dirname, "../assets/test_dummy.png");
-const fileBuffer = fs.readFileSync(dummyTestImage);
-require("dotenv").config();
+
+let fileBuffer;
 
 const mongod = new MongoMemoryServer();
 let server;
@@ -23,6 +24,8 @@ let DeviceToken;
 beforeAll(async () => {
   await mongod.start();
   process.env.DB_CONNECTION_STRING = await mongod.getUri();
+
+  fileBuffer = fs.readFileSync(dummyTestImage);
 
   try {
     await mongoose.connect(process.env.DB_CONNECTION_STRING, {
