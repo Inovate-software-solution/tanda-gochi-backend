@@ -105,7 +105,7 @@ describe("POST /api/toys/upload", () => {
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
@@ -117,7 +117,7 @@ describe("POST /api/toys/upload", () => {
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(400);
     });
@@ -132,7 +132,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(401);
     });
@@ -145,7 +145,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(401);
     });
@@ -160,7 +160,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 1")
         .field("Description", "Test Description 1")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
       console.log(response.body);
       expect(response.statusCode).toBe(201);
       // add some more toys if the test is passed for other tests
@@ -171,7 +171,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 2")
         .field("Description", "Test Description 2")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
 
       await server
         .post("/api/toys/upload")
@@ -180,7 +180,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 3")
         .field("Description", "Test Description 3")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
 
       await server
         .post("/api/toys/upload")
@@ -189,7 +189,7 @@ describe("POST /api/toys/upload", () => {
         .field("Name", "Test Toy 4")
         .field("Description", "Test Description 4")
         .field("Price", 100)
-        .attach("file", "tests/assets/test_dummy.png");
+        .attach("file", "./tests/assets/test_dummy.png");
     });
   });
 });
