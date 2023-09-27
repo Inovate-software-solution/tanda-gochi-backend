@@ -181,3 +181,93 @@ export const deleteUserById = async function (req, res, next) {
     });
   }
 };
+
+export const getUserBadges = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json(user.Badges);
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
+
+export const getCurrentUserBadges = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.body.UserId);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json(user.Badges);
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
+
+export const getCurrentUserInventory = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.body.UserId);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json({
+      Inventory: user.Inventory,
+      ToysInventory: user.ToysInventory,
+      OutfitsInventory: user.OutfitsInventory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
+
+export const getUserInventory = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json({
+      Inventory: user.Inventory,
+      ToysInventory: user.ToysInventory,
+      OutfitsInventory: user.OutfitsInventory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
+
+export const postAddCredits = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.body.TargetUserId);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    user.Credit += req.body.Credit;
+    await user.save();
+    res.status(200).json({ error: false, message: "Success" });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
