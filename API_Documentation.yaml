@@ -8,7 +8,7 @@ info:
 servers:
   - url: https://capstone.marcusnguyen.dev/api
     description: Production server
-  - url: localhost:3001
+  - url: http://localhost:3001/api
     description: Local server
 
 

@@ -24,7 +24,7 @@ export const buyItem = async (req, res, next) => {
 
     // Check if the user has the item in inventory
     const userItem = user.Inventory.find(
-      (item) => item.ItemId === req.body.ItemId
+      (item) => item.ItemId.toString() === req.body.ItemId
     );
     if (userItem) {
       userItem.Quantity += req.body.Quantity;
@@ -111,7 +111,7 @@ export const buyOutfit = async (req, res, next) => {
 
     // Check if the user has the outfit in inventory
     const userOutfit = user.OutfitsInventory.find(
-      (e) => e.OutfitId === req.body.OutfitId
+      (e) => e.OutfitId.toString() === req.body.OutfitId
     );
     if (userOutfit) {
       res.status(403).json({ error: true, message: "Outfit already bought" });
@@ -205,13 +205,16 @@ export const buyToy = async (req, res, next) => {
     }
 
     // Check if the user has the toy in inventory
-    const userToy = user.ToysInventory.find((e) => e.ToyId === req.body.ToyId);
+    const userToy = user.ToysInventory.find(
+      (e) => e.ToyId.toString() === req.body.ToyId
+    );
+    console.log(user.ToysInventory);
     if (userToy) {
       res.status(403).json({ error: true, message: "Toy already bought" });
       return;
     }
 
-    user.Inventory.push({
+    user.ToysInventory.push({
       ToyId: req.body.ToyId,
     });
 
