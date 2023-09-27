@@ -46,4 +46,36 @@ router.delete(
   controller.deleteUserById
 );
 
+router.get(
+  "/current/badges",
+  authorize(["user"]),
+  controller.getCurrentUserBadges
+);
+
+router.get(
+  "/:id/badges",
+  validator.paramsIdValidation,
+  authorize(["user"]),
+  controller.getUserBadges
+);
+
+router.get(
+  "/current/inventory",
+  authorize(["user"]),
+  controller.getCurrentUserInventory
+);
+
+router.get(
+  "/:id/inventory",
+  validator.paramsIdValidation,
+  authorize(["user", "admin"]),
+  controller.getUserInventory
+);
+
+router.post(
+  "/addcredits",
+  validator.postAddCreditsValidation,
+  authorize(["user", "admin"]),
+  controller.postAddCredits
+);
 module.exports = router;

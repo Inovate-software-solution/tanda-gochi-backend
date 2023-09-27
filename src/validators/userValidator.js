@@ -100,3 +100,18 @@ export const TandaUserValidation = async function (req, res, next) {
     return;
   }
 };
+
+export const postAddCreditsValidation = function (req, res, next) {
+  const schema = Joi.object({
+    Credits: Joi.number().min(0).required(),
+    TargetUserId: Joi.string().required(),
+  }).unknown();
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    res.status(400).json({ error: true, message: error.message });
+    return;
+  }
+  next();
+};

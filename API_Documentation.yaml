@@ -702,6 +702,217 @@ paths:
       security:
           - bearerAuth: []
 
+  # Users utils
+  /Users/current/badges:
+    get:
+      summary: Get badges of current user
+      tags:
+        - Users utils
+      responses:
+        '200':
+          description: Returns badges of a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Badge'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        '500': 
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+  
+  /Users/:_id/badges:
+    get:
+      summary: Get badges of a user by Id
+      tags:
+        - Users utils
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+          required: true
+          description: ID of the user
+      responses:
+        '200':
+          description: Get badges of a user by Id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Badge'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        '500': 
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+  /Users/current/inventory:
+    get:
+      summary: Return the inventory of current user
+      tags:
+        - Users utils
+      responses:
+        '200':
+          description: Returns badges of a user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Inventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        ItemId:
+                          type: string
+                        Quantity:
+                          type: integer
+                  OutfitsInventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        OutfitId:
+                          type: string
+                        Equipped:
+                          type: boolean
+                  ToysInventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        ToyId:
+                          type: string
+                example:
+                  Inventory:
+                  - ItemId: "item1"
+                    Quantity: 5
+                  - ItemId: "item2"
+                    Quantity: 2
+                  OutfitsInventory:
+                  - OutfitId: "outfit1"
+                    Equipped: true
+                  - OutfitId: "outfit2"
+                    Equipped: false
+                  ToysInventory:
+                  - ToyId: "toy1"
+                  - ToyId: "toy2"               
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        '500': 
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+  /Users/:id/inventory:
+    get:
+      summary: Return the inventory of current user
+      tags:
+        - Users utils
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+          required: true
+          description: ID of the user  
+      responses:
+        '200':
+          description: Returns badges of a user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Inventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        ItemId:
+                          type: string
+                        Quantity:
+                          type: integer
+                  OutfitsInventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        OutfitId:
+                          type: string
+                        Equipped:
+                          type: boolean
+                  ToysInventory:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        ToyId:
+                          type: string
+                example:
+                  Inventory:
+                  - ItemId: "item1"
+                    Quantity: 5
+                  - ItemId: "item2"
+                    Quantity: 2
+                  OutfitsInventory:
+                  - OutfitId: "outfit1"
+                    Equipped: true
+                  - OutfitId: "outfit2"
+                    Equipped: false
+                  ToysInventory:
+                  - ToyId: "toy1"
+                  - ToyId: "toy2"               
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        '500': 
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+  /Users/addcredit:
+    post:
+      summary: Add credit to target users
+      tags:
+        - Users utils
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                TargetUsersId:
+                  type: string
+                  example: "123123123 (Id generated by MongoDB)"
+                Credit:
+                  type: integer
+                  example: 100
+              required:
+                - TargetUsersId
+                - Credit
+      responses:
+        "200":
+          description: Credit added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  error: false
+                  message: "Success"  
+        "400":
+          $ref: '#/components/responses/BadRequestError'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        "500":
+          $ref: '#/components/responses/InternalServerError'
   # User Actions
   /User/action/buy/item:
     post:
