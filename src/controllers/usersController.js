@@ -261,7 +261,7 @@ export const postAddCredits = async function (req, res, next) {
       res.status(404).json({ error: true, message: "User do not exists" });
       return;
     }
-    user.Credit += req.body.Credit;
+    user.Credit += req.body.Credits;
     await user.save();
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {

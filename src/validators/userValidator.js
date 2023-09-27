@@ -103,7 +103,7 @@ export const TandaUserValidation = async function (req, res, next) {
 
 export const postAddCreditsValidation = function (req, res, next) {
   const schema = Joi.object({
-    Credits: Joi.number().min(0).required(),
+    Credits: Joi.number().min(0).positive().required(),
     TargetUserId: Joi.string().required(),
   }).unknown();
 
