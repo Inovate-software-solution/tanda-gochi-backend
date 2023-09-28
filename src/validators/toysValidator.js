@@ -21,8 +21,6 @@ export const postMediaTypeValidation = function (req, res, next) {
     return;
   }
   upload.single("file")(req, res, (err) => {
-    console.log(req.file);
-    console.log(req.body);
     if (err instanceof multer.MulterError) {
       console.log(err);
     } else if (err) {

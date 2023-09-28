@@ -16,18 +16,22 @@ const upload = multer({ storage: storage });
 
 export const postMediaTypeValidation = function (req, res, next) {
   // Post only accept multipart/form-data
-  if (req.is("application/json")) {
-    return next();
+  if (!req.is("multipart/form-data")) {
+    res.status(400).json({ error: true, message: "Invalid media type" });
+    return;
   }
-  if (req.is("multipart/form-data")) {
-    upload.single("file")(req, res, () => {
-      if (!req.file) {
-        res.status(400).json({ error: true, message: "Need to upload a file" });
-        return;
-      }
-      return next();
-    });
-  }
+  upload.single("file")(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+    } else if (err) {
+      console.log(err);
+    }
+    if (!req.file) {
+      res.status(400).json({ error: true, message: "Need to upload a file" });
+      return;
+    }
+    next();
+  });
 };
 
 export const postBodyValidation = function (req, res, next) {
