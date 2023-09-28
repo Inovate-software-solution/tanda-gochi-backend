@@ -9,6 +9,8 @@ import * as controller from "../controllers/usersController";
 
 router.get("/", authorize(["user", "admin"]), controller.getUsers);
 
+router.get("/current", authorize(["user"]), controller.getCurrentUser);
+
 router.get(
   "/:id",
   validator.paramsIdValidation,

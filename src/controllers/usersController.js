@@ -32,6 +32,23 @@ export const getUserById = async function (req, res, next) {
   }
 };
 
+export const getCurrentUser = async function (req, res, next) {
+  try {
+    const user = await User.findById(req.body.UserId);
+    if (!user) {
+      res.status(404).json({ error: true, message: "User do not exists" });
+      return;
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
+  }
+};
+
 export const postLogin = async function (req, res, next) {
   try {
     const user = await User.findOne({ Email: req.body.Email });
@@ -261,7 +278,7 @@ export const postAddCredits = async function (req, res, next) {
       res.status(404).json({ error: true, message: "User do not exists" });
       return;
     }
-    user.Credit += req.body.Credits;
+    user.Credits += req.body.Credits;
     await user.save();
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
