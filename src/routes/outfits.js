@@ -16,7 +16,7 @@ router.get(
 );
 
 router.post(
-  "/create",
+  "/upload",
   validator.postMediaTypeValidation,
   validator.postBodyValidation,
   authorize(["user", "admin"]),
@@ -24,7 +24,7 @@ router.post(
 );
 
 router.put(
-  "/edit/:id",
+  "/update/:id",
   validator.paramsIdValidation,
   validator.putMediaTypeValidation,
   validator.putBodyValidation,

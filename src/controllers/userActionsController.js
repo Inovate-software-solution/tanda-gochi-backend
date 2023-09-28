@@ -66,7 +66,9 @@ export const useItem = async (req, res, next) => {
       return;
     }
 
-    const userItem = user.Inventory.find((e) => e.ItemId === req.body.ItemId);
+    const userItem = user.Inventory.find(
+      (e) => e.ItemId.toString() === req.body.ItemId
+    );
     if (!userItem) {
       res.status(403).json({ error: true, message: "User does not have item" });
       return;
@@ -154,7 +156,7 @@ export const equipOutfit = async (req, res, next) => {
 
     // Check if the user has the outfit in inventory
     const selectedOutfit = user.OutfitsInventory.find(
-      (e) => e.OutfitId === req.body.OutfitId
+      (e) => e.OutfitId.toString() === req.body.OutfitId
     );
     if (!selectedOutfit) {
       res

@@ -2,7 +2,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../../src/app");
-const Toy = require("../../src/schemas/Toy");
+const Outfit = require("../../src/schemas/Outfit");
 const path = require("path");
 require("dotenv").config();
 
@@ -76,11 +76,11 @@ afterAll(async () => {
 // ###############################################
 // ###############################################
 // ###############################################
-describe("POST /api/toys/upload", () => {
+describe("POST /api/outfits/upload", () => {
   describe("Request Validation Section", () => {
     test("should return 400 if wrong media type", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "application/json") // intentionally setting the wrong media type
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
@@ -89,10 +89,10 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 400 if no file provided", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
+        .field("Name", "Test Outfit")
         .field("Description", "Test Description")
         .field("Price", 100);
       expect(response.statusCode).toBe(400);
@@ -100,7 +100,7 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 400 if missing Name field", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
         .field("Description", "Test Description")
@@ -112,10 +112,10 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 400 if missing Price field", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
+        .field("Name", "Test Outfit")
         .field("Description", "Test Description")
         .attach("file", "./tests/assets/test_dummy.png");
 
@@ -126,10 +126,10 @@ describe("POST /api/toys/upload", () => {
   describe("Authorization section", () => {
     test("should return 403 if the user do not have permission", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_User)
-        .field("Name", "Test Toy")
+        .field("Name", "Test Outfit")
         .field("Description", "Test Description")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
@@ -139,10 +139,10 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 401 if the provided token is invalid", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + "SomeRandomToken")
-        .field("Name", "Test Toy")
+        .field("Name", "Test Outfit")
         .field("Description", "Test Description")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
@@ -154,39 +154,39 @@ describe("POST /api/toys/upload", () => {
   describe("Controller Sections", () => {
     test("should return 201 if everything is correct", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 1")
+        .field("Name", "Test Outfit 1")
         .field("Description", "Test Description 1")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       expect(response.statusCode).toBe(201);
-      // add some more toys if the test is passed for other tests
+      // add some more outfits if the test is passed for other tests
       await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 2")
+        .field("Name", "Test Outfit 2")
         .field("Description", "Test Description 2")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 3")
+        .field("Name", "Test Outfit 3")
         .field("Description", "Test Description 3")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       await server
-        .post("/api/toys/upload")
+        .post("/api/outfits/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 4")
+        .field("Name", "Test Outfit 4")
         .field("Description", "Test Description 4")
         .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
@@ -194,7 +194,7 @@ describe("POST /api/toys/upload", () => {
   });
 });
 
-describe("GET /api/toys", () => {
+describe("GET /api/outfits", () => {
   describe("Request Validation Section", () => {
     test("No Validation for this endpoint", () => {
       expect(true).toBe(true);
@@ -204,7 +204,7 @@ describe("GET /api/toys", () => {
   describe("Authorization section", () => {
     test("should return 200 for user", async () => {
       const response = await server
-        .get("/api/toys")
+        .get("/api/outfits")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
@@ -212,7 +212,7 @@ describe("GET /api/toys", () => {
 
     test("should return 200 for user", async () => {
       const response = await server
-        .get("/api/toys")
+        .get("/api/outfits")
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
@@ -221,26 +221,26 @@ describe("GET /api/toys", () => {
 
   describe("Controller section", () => {
     test("should return 201 for user", async () => {
-      const toys = await Toy.find();
+      const outfits = await Outfit.find();
 
       const response = await server
-        .get("/api/toys")
+        .get("/api/outfits")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.length).toBe(4);
-      expect(response.body[0].Name).toBe(toys[0].Name);
+      expect(response.body[0].Name).toBe(outfits[0].Name);
     });
   });
 });
 
-describe("GET /api/toys/:id", () => {
+describe("GET /api/outfits/:id", () => {
   describe("Validation section", () => {
     test("should return 400 if the id is not a valid ObjectId", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .get("/api/toys/1234")
+        .get("/api/outfits/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(400);
@@ -249,20 +249,20 @@ describe("GET /api/toys/:id", () => {
 
   describe("Authorization section", () => {
     test("should return 200 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/outfits/" + outfitId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
     });
 
     test("should return 200 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/outfits/" + outfitId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
@@ -271,27 +271,27 @@ describe("GET /api/toys/:id", () => {
 
   describe("Controller section", () => {
     test("should return 200 correct request", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/outfits/" + outfitId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.Name).toBe(toys[0].Name);
-      expect(response.body.Description).toBe(toys[0].Description);
-      expect(response.body.Price).toBe(toys[0].Price);
+      expect(response.body.Name).toBe(outfits[0].Name);
+      expect(response.body.Description).toBe(outfits[0].Description);
+      expect(response.body.Price).toBe(outfits[0].Price);
     });
   });
 });
 
-describe("DELETE /api/toys/delete/:id", () => {
+describe("DELETE /api/outfits/delete/:id", () => {
   describe("Validation section", () => {
     test("should return 400 if the id is not a valid ObjectId", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .delete("/api/toys/delete/1234")
+        .delete("/api/outfits/delete/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(400);
@@ -300,10 +300,10 @@ describe("DELETE /api/toys/delete/:id", () => {
 
   describe("Authorization section", () => {
     test("should return 401 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .delete("/api/toys/delete/" + toyId)
+        .delete("/api/outfits/delete/" + outfitId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(401);
@@ -312,16 +312,16 @@ describe("DELETE /api/toys/delete/:id", () => {
 
   describe("Controller section", () => {
     test("should return 200 correct request", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const outfits = await Outfit.find();
+      const outfitId = outfits[0]._id;
       const response = await server
-        .delete("/api/toys/delete/" + toyId)
+        .delete("/api/outfits/delete/" + outfitId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("Success");
-      const toy = await Toy.findOne({ _id: toyId });
-      expect(toy).toBe(null);
+      const outfit = await Outfit.findOne({ _id: outfitId });
+      expect(outfit).toBe(null);
     });
   });
 });

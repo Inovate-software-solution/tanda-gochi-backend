@@ -2,7 +2,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const mongoose = require("mongoose");
 const request = require("supertest");
 const app = require("../../src/app");
-const Toy = require("../../src/schemas/Toy");
+const Badge = require("../../src/schemas/Badge");
 const path = require("path");
 require("dotenv").config();
 
@@ -76,11 +76,11 @@ afterAll(async () => {
 // ###############################################
 // ###############################################
 // ###############################################
-describe("POST /api/toys/upload", () => {
+describe("POST /api/badges/upload", () => {
   describe("Request Validation Section", () => {
     test("should return 400 if wrong media type", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "application/json") // intentionally setting the wrong media type
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
@@ -89,33 +89,19 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 400 if no file provided", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
-        .field("Description", "Test Description")
-        .field("Price", 100);
+        .field("Title", "Test Badge")
+        .field("Description", "Test Description");
       expect(response.statusCode).toBe(400);
     });
 
-    test("should return 400 if missing Name field", async () => {
+    test("should return 400 if missing Title field", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Description", "Test Description")
-        .field("Price", 100)
-        .attach("file", "./tests/assets/test_dummy.png");
-
-      expect(response.statusCode).toBe(400);
-    });
-
-    test("should return 400 if missing Price field", async () => {
-      const response = await server
-        .post("/api/toys/upload")
-        .set("media-type", "multipart/form-data")
-        .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy")
         .field("Description", "Test Description")
         .attach("file", "./tests/assets/test_dummy.png");
 
@@ -126,12 +112,11 @@ describe("POST /api/toys/upload", () => {
   describe("Authorization section", () => {
     test("should return 403 if the user do not have permission", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_User)
-        .field("Name", "Test Toy")
+        .field("Title", "Test Badge")
         .field("Description", "Test Description")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       expect(response.statusCode).toBe(401);
@@ -139,12 +124,11 @@ describe("POST /api/toys/upload", () => {
 
     test("should return 401 if the provided token is invalid", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + "SomeRandomToken")
-        .field("Name", "Test Toy")
+        .field("Title", "Test Badge")
         .field("Description", "Test Description")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       expect(response.statusCode).toBe(401);
@@ -154,47 +138,43 @@ describe("POST /api/toys/upload", () => {
   describe("Controller Sections", () => {
     test("should return 201 if everything is correct", async () => {
       const response = await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 1")
+        .field("Title", "Test Badge 1")
         .field("Description", "Test Description 1")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       expect(response.statusCode).toBe(201);
-      // add some more toys if the test is passed for other tests
+      // add some more badges if the test is passed for other tests
       await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 2")
+        .field("Title", "Test Badge 2")
         .field("Description", "Test Description 2")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 3")
+        .field("Title", "Test Badge 3")
         .field("Description", "Test Description 3")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
 
       await server
-        .post("/api/toys/upload")
+        .post("/api/badges/upload")
         .set("media-type", "multipart/form-data")
         .set("Authorization", "Bearer " + AuthToken_Admin)
-        .field("Name", "Test Toy 4")
+        .field("Title", "Test Badge 4")
         .field("Description", "Test Description 4")
-        .field("Price", 100)
         .attach("file", "./tests/assets/test_dummy.png");
     });
   });
 });
 
-describe("GET /api/toys", () => {
+describe("GET /api/badges", () => {
   describe("Request Validation Section", () => {
     test("No Validation for this endpoint", () => {
       expect(true).toBe(true);
@@ -204,7 +184,7 @@ describe("GET /api/toys", () => {
   describe("Authorization section", () => {
     test("should return 200 for user", async () => {
       const response = await server
-        .get("/api/toys")
+        .get("/api/badges")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
@@ -212,7 +192,7 @@ describe("GET /api/toys", () => {
 
     test("should return 200 for user", async () => {
       const response = await server
-        .get("/api/toys")
+        .get("/api/badges")
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
@@ -221,26 +201,26 @@ describe("GET /api/toys", () => {
 
   describe("Controller section", () => {
     test("should return 201 for user", async () => {
-      const toys = await Toy.find();
+      const badges = await Badge.find();
 
       const response = await server
-        .get("/api/toys")
+        .get("/api/badges")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.length).toBe(4);
-      expect(response.body[0].Name).toBe(toys[0].Name);
+      expect(response.body[0].Title).toBe(badges[0].Title);
     });
   });
 });
 
-describe("GET /api/toys/:id", () => {
+describe("GET /api/badges/:id", () => {
   describe("Validation section", () => {
     test("should return 400 if the id is not a valid ObjectId", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .get("/api/toys/1234")
+        .get("/api/badges/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(400);
@@ -249,20 +229,20 @@ describe("GET /api/toys/:id", () => {
 
   describe("Authorization section", () => {
     test("should return 200 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/badges/" + badgeId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
     });
 
     test("should return 200 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/badges/" + badgeId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
@@ -271,27 +251,26 @@ describe("GET /api/toys/:id", () => {
 
   describe("Controller section", () => {
     test("should return 200 correct request", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .get("/api/toys/" + toyId)
+        .get("/api/badges/" + badgeId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.Name).toBe(toys[0].Name);
-      expect(response.body.Description).toBe(toys[0].Description);
-      expect(response.body.Price).toBe(toys[0].Price);
+      expect(response.body.Title).toBe(badges[0].Title);
+      expect(response.body.Description).toBe(badges[0].Description);
     });
   });
 });
 
-describe("DELETE /api/toys/delete/:id", () => {
+describe("DELETE /api/badges/delete/:id", () => {
   describe("Validation section", () => {
     test("should return 400 if the id is not a valid ObjectId", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .delete("/api/toys/delete/1234")
+        .delete("/api/badges/delete/1234")
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(400);
@@ -299,11 +278,11 @@ describe("DELETE /api/toys/delete/:id", () => {
   });
 
   describe("Authorization section", () => {
-    test("should return 401 for user", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+    test("should return 401 for Toyuser", async () => {
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .delete("/api/toys/delete/" + toyId)
+        .delete("/api/badges/delete/" + badgeId)
         .set("Authorization", "Bearer " + AuthToken_User);
 
       expect(response.statusCode).toBe(401);
@@ -312,16 +291,16 @@ describe("DELETE /api/toys/delete/:id", () => {
 
   describe("Controller section", () => {
     test("should return 200 correct request", async () => {
-      const toys = await Toy.find();
-      const toyId = toys[0]._id;
+      const badges = await Badge.find();
+      const badgeId = badges[0]._id;
       const response = await server
-        .delete("/api/toys/delete/" + toyId)
+        .delete("/api/badges/delete/" + badgeId)
         .set("Authorization", "Bearer " + AuthToken_Admin);
 
       expect(response.statusCode).toBe(200);
       expect(response.body.message).toBe("Success");
-      const toy = await Toy.findOne({ _id: toyId });
-      expect(toy).toBe(null);
+      const badge = await Badge.findOne({ _id: badgeId });
+      expect(badge).toBe(null);
     });
   });
 });

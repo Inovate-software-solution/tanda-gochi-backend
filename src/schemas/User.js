@@ -79,9 +79,9 @@ const UserSchema = new mongoose.Schema({
   ],
 
   LastInteraction: {
-    type: Date,
+    type: Number,
     required: true,
-    default: Date.now(),
+    default: () => Date.now(),
   },
 });
 

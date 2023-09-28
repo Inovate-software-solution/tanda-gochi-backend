@@ -6,31 +6,27 @@ export const getItems = async (req, res, next) => {
     res.status(200).json(items);
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
 export const getItemById = async (req, res, next) => {
   try {
-    const item = await Item.findOne({ _id: req.params.id });
-    if (!outfit) {
-      res.status(404).json({ error: true, message: "Outfit do not exists" });
+    const item = await Item.findById(req.params.id);
+    if (!item) {
+      res.status(404).json({ error: true, message: "Item do not exists" });
       return;
     }
     res.status(200).json(item);
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -46,12 +42,10 @@ export const uploadItem = async (req, res, next) => {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -75,12 +69,10 @@ export const updateItem = async (req, res, next) => {
     res.status(201).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
 
@@ -90,11 +82,9 @@ export const deleteItem = async (req, res, next) => {
     res.status(200).json({ error: false, message: "Success" });
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
   }
 };
