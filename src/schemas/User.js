@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  Credit: {
+  Credits: {
     type: Number,
     required: true,
     default: 0,
@@ -54,11 +54,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Toys",
         required: true,
-      },
-      Equipped: {
-        type: Boolean,
-        required: true,
-        default: false,
       },
     },
   ],

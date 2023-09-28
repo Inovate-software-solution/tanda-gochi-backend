@@ -17,7 +17,7 @@ export const buyItem = async (req, res, next) => {
       return;
     }
 
-    if (user.Credit < item.Price * req.body.Quantity) {
+    if (user.Credits < item.Price * req.body.Quantity) {
       res.status(403).json({ error: true, message: "Not enough credit" });
       return;
     }
@@ -35,7 +35,7 @@ export const buyItem = async (req, res, next) => {
       });
     }
 
-    user.Credit -= item.Price * req.body.Quantity;
+    user.Credits -= item.Price * req.body.Quantity;
     user.LastInteraction = Date.now();
     await user.save();
 
@@ -79,6 +79,7 @@ export const useItem = async (req, res, next) => {
     }
     userItem.Quantity -= 1;
     user.LastInteraction = Date.now();
+    user.markModified("Inventory");
     await user.save();
 
     res.status(200).json({ error: false, message: "Item used" });
@@ -106,7 +107,7 @@ export const buyOutfit = async (req, res, next) => {
       return;
     }
 
-    if (user.Credit < outfit.Price) {
+    if (user.Credits < outfit.Price) {
       res.status(403).json({ error: true, message: "Not enough credit" });
       return;
     }
@@ -120,12 +121,11 @@ export const buyOutfit = async (req, res, next) => {
       return;
     }
 
-    user.Inventory.push({
+    user.OutfitsInventory.push({
       OutfitId: req.body.OutfitId,
     });
 
-    user.Credit -= outfit.Price;
-    user.LastInteraction = Date.now();
+    user.Credits -= outfit.Price;
 
     await user.save();
 
@@ -170,7 +170,7 @@ export const equipOutfit = async (req, res, next) => {
       return;
     }
 
-    user.Inventory.forEach((e) => (e.Equipped = false));
+    user.OutfitsInventory.forEach((e) => (e.Equipped = false));
     selectedOutfit.Equipped = true;
 
     user.LastInteraction = Date.now();
@@ -201,7 +201,7 @@ export const buyToy = async (req, res, next) => {
       return;
     }
 
-    if (user.Credit < toy.Price) {
+    if (user.Credits < toy.Price) {
       res.status(403).json({ error: true, message: "Not enough credit" });
       return;
     }
@@ -210,7 +210,6 @@ export const buyToy = async (req, res, next) => {
     const userToy = user.ToysInventory.find(
       (e) => e.ToyId.toString() === req.body.ToyId
     );
-    console.log(user.ToysInventory);
     if (userToy) {
       res.status(403).json({ error: true, message: "Toy already bought" });
       return;
@@ -220,7 +219,7 @@ export const buyToy = async (req, res, next) => {
       ToyId: req.body.ToyId,
     });
 
-    user.Credit -= toy.Price;
+    user.Credits -= toy.Price;
 
     await user.save();
 

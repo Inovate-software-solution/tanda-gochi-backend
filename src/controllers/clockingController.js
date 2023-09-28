@@ -33,12 +33,10 @@ export const clockIn = async (req, res, next) => {
     req.body.TandaDeviceId = device.TandaDeviceId;
   } catch (error) {
     console.log(error.message);
-    res
-      .status(500)
-      .json({
-        error: true,
-        message: "Internal server error: " + error.message,
-      });
+    res.status(500).json({
+      error: true,
+      message: "Internal server error: " + error.message,
+    });
     return;
   }
 
@@ -65,9 +63,9 @@ export const clockIn = async (req, res, next) => {
   // Update the user's score, credits and badges
   const user = await User.findOne({ EmployeeId: clockingUser.id });
   if (req.body.GameResult === "win") {
-    user.Credit += 100;
+    user.Credits += 100;
   } else {
-    user.Credit += 95;
+    user.Credits += 95;
   }
 
   // The clock in and out will be handle at the end of the controller to ensure that there will be no error that will cause the user to not get clocked in/out

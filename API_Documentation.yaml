@@ -458,6 +458,25 @@ paths:
       security:
         - bearerAuth: []
 
+  /Users/current:
+    get:
+      summary: Get user by ID
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Returns current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "401":
+          $ref: '#/components/responses/UnauthorizedError'
+        '500': 
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
   /Users/register:
     post:
       tags:
@@ -896,10 +915,10 @@ paths:
                   example: 100
               required:
                 - TargetUsersId
-                - Credit
+                - Credits
       responses:
         "200":
-          description: Credit added successfully
+          description: Credits added successfully
           content:
             application/json:
               schema:
@@ -964,7 +983,7 @@ paths:
                     type: string
               examples:
                 userNotEnoughCredit:
-                  summary: "User Does Not Have Enough Credit"
+                  summary: "User Does Not Have Enough Credits"
                   value:
                     error: true
                     message: "User does not have enough credit."
@@ -1087,7 +1106,7 @@ paths:
                     type: string
               examples:
                 userNotEnoughCredit:
-                  summary: "User Does Not Have Enough Credit"
+                  summary: "User Does Not Have Enough Credits"
                   value:
                     error: true
                     message: "User does not have enough credit."
@@ -1214,7 +1233,7 @@ paths:
                     type: string
               examples:
                 userNotEnoughCredit:
-                  summary: "User Does Not Have Enough Credit"
+                  summary: "User Does Not Have Enough Credits"
                   value:
                     error: true
                     message: "User does not have enough credit."
@@ -2306,7 +2325,7 @@ components:
         Score:
           type: integer
           example: 9999
-        Credit:
+        Credits:
           type: integer
           example: 9999
         Badges:
