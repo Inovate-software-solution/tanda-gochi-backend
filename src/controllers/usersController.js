@@ -96,7 +96,7 @@ export const postLogin = async function (req, res, next) {
       expiresIn: 86400,
     });
 
-    res.status(200).json({ error: false, token: token });
+    res.status(200).json({ error: false, token: token, Scopes: Scopes });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({

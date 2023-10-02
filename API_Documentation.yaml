@@ -564,6 +564,7 @@ paths:
                 example: 
                   error: false
                   token: "dfgwrtgsadgqewsdgewew (Generaly a JWT token)"
+                  Scope: ["user","admin"]
         '400':
           $ref: '#/components/responses/BadRequestError'
         '500':
