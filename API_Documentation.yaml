@@ -2273,8 +2273,7 @@ paths:
                 schema:
                   type: object
                   example: 
-                    error: false
-                    message: "Device added successfully!"
+                    DeviceToken: "A Devicetoken generated"
           '403':
             description: "No permission"
             content:
