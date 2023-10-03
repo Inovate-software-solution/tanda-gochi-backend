@@ -52,7 +52,7 @@ export const postRegisterDevice = async (req, res) => {
 
     const DeviceToken = req.jwt.sign(
       { DeviceId: newDevice.id },
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET_DEVICE
     );
 
     res.status(201).json({ DeviceToken: DeviceToken });
@@ -62,5 +62,34 @@ export const postRegisterDevice = async (req, res) => {
       error: true,
       message: "Internal server error: " + error.message,
     });
+  }
+};
+
+export const postValidateDevice = async (req, res) => {
+  try {
+    const DeviceId = req.jwt.verify(
+      req.body.DeviceToken,
+      process.env.JWT_SECRET_DEVICE
+    );
+    const TandaDeviceResponse = await axios
+      .get(req.TandaAPI + "/devices/" + DeviceId, {
+        headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN },
+      })
+      .then((res) => res.data)
+      .catch((error) => {
+        console.log(error.response.data);
+        res.status(error.response.status).json(error.response.data);
+        return;
+      });
+    console.log(DeviceId);
+    console.log(TandaDeviceResponse);
+
+    if (TandaDeviceResponse.error === "No known device with that id!") {
+      res.status(401).json({ error: true, message: "Invalid Device Token" });
+      return;
+    }
+    res.status(200).json({ message: "Valid Device" });
+  } catch (error) {
+    res.status(401).json({ error: true, message: "Invalid Device Token" });
   }
 };

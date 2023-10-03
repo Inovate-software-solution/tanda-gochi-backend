@@ -12,4 +12,10 @@ router.post(
   controller.postRegisterDevice
 );
 
+router.post(
+  "/validate",
+  validator.postValidateDevice,
+  controller.postValidateDevice
+);
+
 module.exports = router;
