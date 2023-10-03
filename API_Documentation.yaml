@@ -112,74 +112,6 @@ paths:
   #     security:
   #       - bearerAuth: []
     
-  # /Devices/register:
-  #   post:
-  #     description: Register a new device
-  #     tags:
-  #     - Devices
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             type: object
-  #             properties:
-  #               Name:
-  #                 type: string
-  #                 example: "Front-door device"
-  #               Description:
-  #                 type: string
-  #                 example: "This is device at the front door"
-  #               Status:
-  #                 type: string
-  #                 example: "ACTIVE"
-  #               AuthToken:
-  #                 type: string
-  #                 example: "1234567890"
-  #             required:
-  #               - Name
-  #               - Description
-  #               - Status
-  #               - AuthToken
-  #     responses:
-  #       '201':
-  #         description: Device added successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               example: 
-  #                 error: false
-  #                 message: "Device added successfully!"
-  #       '401':
-  #         description: "Unauthorized"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               example: 
-  #                 error: true
-  #                 message: "Unauthorized"
-  #       '400':
-  #         description: "Bad request"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               example: 
-  #                 error: true
-  #                 message: "Detail of missing or mailformed request body"
-  #       '500':
-  #         description: "Internal server error"
-  #         content:
-  #           application/json:
-  #             schema:
-  #               type: object
-  #               example: 
-  #                 error: true
-  #                 message: "Internal server error"
-  #     security:
-  #         - bearerAuth: []
-
   # /Devices/update/{_id}:
   #   put:
   #     tags:
@@ -2309,6 +2241,67 @@ paths:
       security:
         - bearerAuth: []
 
+  /Devices/register:
+      post:
+        description: Register a new device
+        tags:
+        - Devices
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  DeviceName:
+                    type: string
+                    example: "This is a new Device Name"
+                  Email:
+                    type: string
+                    example: "demo_account_user199087+1@tanda.co"
+                  Password:
+                    type: string
+                    example: "SOME_PASSWORD"
+                required:
+                  - DeviceName
+                  - Email
+                  - Password
+        responses:
+          '201':
+            description: Device added successfully
+            content:
+              application/json:
+                schema:
+                  type: object
+                  example: 
+                    error: false
+                    message: "Device added successfully!"
+          '403':
+            description: "No permission"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  example: 
+                    error: true
+                    message: "No permission"
+          '400':
+            description: "Bad request"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  example: 
+                    error: true
+                    message: "Detail of missing or mailformed request body"
+          '500':
+            description: "Internal server error"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  example: 
+                    error: true
+                    message: "Internal server error"
 components:
   schemas:
     User:
