@@ -57,6 +57,7 @@ export const clockIn = async (req, res, next) => {
       res
         .status(error.response.status)
         .json({ error: true, message: error.response.data.error });
+      return;
     });
 
   const clockingUser = tandaUsers.find((e) => e.passcode === req.body.Passcode);
@@ -97,7 +98,6 @@ export const clockIn = async (req, res, next) => {
             user.Score += 100;
           }
         }
-        teritary;
       }
       await user.save();
     }
