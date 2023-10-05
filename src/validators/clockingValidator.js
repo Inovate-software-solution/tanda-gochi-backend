@@ -4,7 +4,6 @@ export const postClockinRequestValidation = function (req, res, next) {
   const schema = Joi.object({
     Passcode: Joi.string().required().length(4),
     DeviceToken: Joi.string().required(),
-    Type: Joi.string().required().valid("start", "finish"),
     GameResult: Joi.string().required().valid("win", "lose", "draw"),
   }).unknown();
   const { error } = schema.validate(req.body);

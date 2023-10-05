@@ -24,8 +24,8 @@ export const postRegisterDevice = async (req, res) => {
       })
       .then((res) => res.data)
       .catch((error) => {
-        console.log(error.response.data);
-        res.status(error.response.status).json(error.response.data);
+        console.log(error.response.data.error);
+        res.status(error.response.status).json(error.response.data.error);
         return;
       });
 
@@ -35,7 +35,7 @@ export const postRegisterDevice = async (req, res) => {
       return;
     }
 
-    const newDevice = axios
+    const newDevice = await axios
       .post(
         req.TandaAPI + "/devices",
         { nickname: req.body.DeviceName },
@@ -45,15 +45,14 @@ export const postRegisterDevice = async (req, res) => {
       )
       .then((res) => res.data)
       .catch((error) => {
-        console.log(error.response.data);
-        res.status(error.response.status).json(error.response.data);
+        console.log(error.response.data.error);
+        res.status(error.response.status).json(error.response.data.error);
         return;
       });
 
-    const DeviceToken = req.jwt.sign(
-      { DeviceId: newDevice.id },
-      process.env.JWT_SECRET_DEVICE
-    );
+    const payload = { DeviceId: newDevice.id };
+
+    const DeviceToken = req.jwt.sign(payload, process.env.JWT_SECRET_DEVICE);
 
     res.status(201).json({ DeviceToken: DeviceToken });
   } catch (error) {
@@ -67,29 +66,21 @@ export const postRegisterDevice = async (req, res) => {
 
 export const postValidateDevice = async (req, res) => {
   try {
-    const DeviceId = req.jwt.verify(
+    const payload = req.jwt.verify(
       req.body.DeviceToken,
       process.env.JWT_SECRET_DEVICE
     );
+    const DeviceId = payload.DeviceId;
     const TandaDeviceResponse = await axios
       .get(req.TandaAPI + "/devices/" + DeviceId, {
         headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN },
       })
       .then((res) => res.data)
-      .catch((error) => {
-        console.log(error.response.data);
-        res.status(error.response.status).json(error.response.data);
-        return;
-      });
-    console.log(DeviceId);
-    console.log(TandaDeviceResponse);
+      .then((res) => console.log(res));
 
-    if (TandaDeviceResponse.error === "No known device with that id!") {
-      res.status(401).json({ error: true, message: "Invalid Device Token" });
-      return;
-    }
     res.status(200).json({ message: "Valid Device" });
   } catch (error) {
+    console.log(error.response.data.error);
     res.status(401).json({ error: true, message: "Invalid Device Token" });
   }
 };

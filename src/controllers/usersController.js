@@ -73,8 +73,8 @@ export const postLogin = async function (req, res, next) {
       })
       .then((res) => res.data)
       .catch((error) => {
-        console.log(error.response.data);
-        res.status(error.response.status).json(error.response.data);
+        console.log(error.response.data.error);
+        res.status(error.response.status).json(error.response.data.error);
         return;
       });
 

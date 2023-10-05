@@ -96,7 +96,7 @@ export const TandaUserValidation = async function (req, res, next) {
     next();
   } catch (error) {
     console.log(error.response.status);
-    res.status(response.status).json(error.response.data);
+    res.status(response.status).json(error.response.data.error);
     return;
   }
 };
