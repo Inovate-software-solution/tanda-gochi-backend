@@ -5,7 +5,7 @@ const Device = require("../schemas/Device");
 
 export const clockIn = async (req, res, next) => {
   // Define time at the start of the function to ensure that the time is as close as possible
-  const ClockTime = Date.now();
+  const ClockTime = Math.floor(Date.now() / 1000);
   console.log(ClockTime);
   const ISO_Today = new Date().toISOString().split("T")[0];
   // This rotue will handle the score, credits and badges and should be called on every clocking
