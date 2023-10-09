@@ -80,11 +80,30 @@ export const clockIn = async (req, res, next) => {
         .json({ error: true, message: error.response.data.error });
       return;
     });
+  const activeShifts = await axios
+    .get(req.TandaAPI + "/shifts/active", {
+      headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN },
+    })
+    .then((res) => res.data)
+    .catch((error) => {
+      console.log(error.response.data.error);
+      res
+        .status(error.response.status)
+        .json({ error: true, message: error.response.data.error });
+    });
 
+  const activeShift = activeShifts.find((e) => e.user_id === clockingUser.id);
+
+  if (!activeShift) {
+    req.body.Type = "start";
+  } else {
+    req.body.Type = "finish";
+  }
   // Update the user's score, credits
   try {
     if (req.body.Type === "start") {
       const user = await User.findOne({ Email: clockingUser.email });
+      console.log(user);
       if (user) {
         if (req.body.GameResult === "win") {
           user.Credits += 100;
@@ -106,26 +125,6 @@ export const clockIn = async (req, res, next) => {
       error: true,
       message: "Internal server error: " + error.message,
     });
-  }
-
-  const activeShifts = await axios
-    .get(req.TandaAPI + "/shifts/active", {
-      headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN },
-    })
-    .then((res) => res.data)
-    .catch((error) => {
-      console.log(error.response.data.error);
-      res
-        .status(error.response.status)
-        .json({ error: true, message: error.response.data.error });
-    });
-
-  const activeShift = activeShifts.find((e) => e.user_id === clockingUser.id);
-
-  if (!activeShift) {
-    req.body.Type = "start";
-  } else {
-    req.body.Type = "finish";
   }
 
   // The clock in and out will be handle at the end of the controller to ensure that there will be no error that will cause the user to not get clocked in/out
