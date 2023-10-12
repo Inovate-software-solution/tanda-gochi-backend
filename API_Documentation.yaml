@@ -340,7 +340,7 @@ paths:
         "500":
           $ref: '#/components/responses/InternalServerError'
   
-  /api/ml_model/predict:
+  /ml_model/predict:
     get:
       summary: Predict the if the employee might be late for his next shift
       tags:
