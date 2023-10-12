@@ -27,9 +27,6 @@ const itemsRouter = require("./routes/items.js");
 const toysRouter = require("./routes/toys.js");
 
 const app = express();
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "jade");
-
 app.use(cors());
 
 const TandaAPI = "https://my.tanda.co/api/v2";
@@ -53,8 +50,8 @@ connectToDatabase();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use("/api/public", express.static(path.join(__dirname, "public")));
-
+app.use("/api/public", express.static(path.join(__dirname, "..", "public")));
+console.log("__dirname:", __dirname);
 app.use((req, res, next) => {
   req.jwt = jwt;
   next();
