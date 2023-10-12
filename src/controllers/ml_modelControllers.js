@@ -3,7 +3,7 @@ import axios from "axios";
 export const latePrediction = async function (req, res, next) {
   const response = await axios
     .post("http://localhost:5000/predict", {
-      UserId: req.body.UserId,
+      UserId: req.body.EmployeeId,
     })
     .then((response) => response.data);
   console.log(response);
