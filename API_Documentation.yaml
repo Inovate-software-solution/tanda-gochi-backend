@@ -339,6 +339,24 @@ paths:
           $ref: '#/components/responses/BadRequestError'
         "500":
           $ref: '#/components/responses/InternalServerError'
+  
+  /api/ml_model/predict:
+    get:
+      summary: Predict the if the employee might be late for his next shift
+      tags:
+        - ML Model
+      responses:
+        "200":
+          description: The prediction was success
+          content:
+            application/json:
+              schema:
+                type: object
+                example: 
+                  prediction: "Low, Moderate or High"
+      security:
+        - bearerAuth: []
+      
   # Users
   /Users:
     get:
