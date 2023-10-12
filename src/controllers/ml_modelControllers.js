@@ -1,31 +1,16 @@
-const { spawn } = require("child_process");
+import axios from "axios";
 
 export const latePrediction = async function (req, res, next) {
-  const userId = req.query.userId;
+  const response = await axios
+    .post("http://localhost:5000/predict/current", {
+      UserId: req.body.UserId,
+    })
+    .then((response) => response.data);
+  console.log(response);
+  if (response.message === "No schedules found for user") {
+    res.status(200).json({ message: "No schedules found for user" });
+    return;
+  }
 
-  // Command to activate conda environment and run Python script
-  const command = `
-        eval "$(conda shell.bash hook)" &&
-        conda activate mycondaenv && 
-        python predict_late.py ${userId}
-    `;
-
-  // Execute the command within a shell
-  const pythonProcess = spawn("/bin/bash", ["-c", command]);
-
-  pythonProcess.stdout.on("data", (data) => {
-    res.send(data.toString());
-  });
-
-  pythonProcess.stderr.on("data", (data) => {
-    console.error(`stderr: ${data}`);
-  });
-
-  pythonProcess.on("close", (code) => {
-    if (code !== 0) {
-      res
-        .status(500)
-        .send("An error occurred while executing the Python script.");
-    }
-  });
+  res.status(200).json(response);
 };

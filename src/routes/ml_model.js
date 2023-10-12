@@ -4,4 +4,6 @@ const router = express.Router();
 
 import * as controllers from "../controllers/ml_modelControllers.js";
 
-router.get("/predict/late", controllers.latePrediction);
+router.post("/predict", controllers.latePrediction);
+
+module.exports = router;

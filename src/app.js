@@ -86,6 +86,7 @@ app.use("/api/badges", badgesRouter);
 app.use("/api/outfits", outfitsRouter);
 app.use("/api/items", itemsRouter);
 app.use("/api/toys", toysRouter);
+app.use("/api/ml_model", mlModelRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

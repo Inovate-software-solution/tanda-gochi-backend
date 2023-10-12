@@ -16,7 +16,7 @@ model = tf.keras.models.load_model('ML_model_for_late_prediction')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    user_id = request.json.get("user_id", 3089573)
+    user_id = request.json.get("UserId")
 
     TandaAPI = "https://my.tanda.co/api/v2"
     TandaRequestHeaders = {
@@ -67,8 +67,14 @@ def predict():
         'numeric_input': data[numeric_features]
     })
 
-    return jsonify({"prediction": str(pred[0][0])})
+    if pred[0][0] > 0.65:
+        return jsonify({"prediction": "High"})
+    elif pred[0][0] > 0.35:
+        return jsonify({"prediction": "Medium"})
+    else:
+        return jsonify({"prediction": "Low"})
+    
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
