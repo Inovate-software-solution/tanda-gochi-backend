@@ -87,7 +87,7 @@ export const postLogin = async function (req, res, next) {
     // Payload for JWT that will be encrypted
     const payload = {
       UserId: user._id,
-      EmployeeId: user.EmployeeId,
+      EmployeeId: tanda_user.id,
       Email: req.body.Email,
       Scopes: Scopes,
     };
