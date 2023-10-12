@@ -25,6 +25,7 @@ const devicesRouter = require("./routes/devices.js");
 const outfitsRouter = require("./routes/outfits.js");
 const itemsRouter = require("./routes/items.js");
 const toysRouter = require("./routes/toys.js");
+const mlModelRouter = require("./routes/ml_model.js");
 
 const app = express();
 app.use(cors());
@@ -51,7 +52,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/api/public", express.static(path.join(__dirname, "..", "public")));
-console.log("__dirname:", __dirname);
 app.use((req, res, next) => {
   req.jwt = jwt;
   next();
