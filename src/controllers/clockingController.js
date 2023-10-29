@@ -7,7 +7,7 @@ export const clockIn = async (req, res, next) => {
   // Define time at the start of the function to ensure that the time is as close as possible
   const ClockTime = Math.floor(Date.now() / 1000);
   console.log(ClockTime);
-  const ISO_Today = new Date().toISOString().split("T")[0];
+  const isoToday = new Date().toISOString().split("T")[0];
   // This rotue will handle the score, credits and badges and should be called on every clocking
   // Check for the valid device
   try {
@@ -69,7 +69,7 @@ export const clockIn = async (req, res, next) => {
   const TodaySchedule = await axios
     .get(
       req.TandaAPI +
-        `/schedules?user_ids=${clockingUser.id}&from=${ISO_Today}&to=${ISO_Today}`,
+        `/schedules?user_ids=${clockingUser.id}&from=${isoToday}&to=${isoToday}`,
       { headers: { Authorization: "Bearer " + process.env.TANDA_AUTH_TOKEN } }
     )
     .then((res) => res.data[0])
